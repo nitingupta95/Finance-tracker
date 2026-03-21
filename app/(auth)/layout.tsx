@@ -5,7 +5,7 @@ interface RootLayoutProps {
 }
 
 const AuthLayout = ({ children }: RootLayoutProps) => {
-  return <div className="flex justify-center pt-40">{children}</div>;
+  return <div className="flex justify-center">{children}</div>;
 };
 
 export default AuthLayout;

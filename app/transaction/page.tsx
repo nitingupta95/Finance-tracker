@@ -2,7 +2,7 @@ import React from 'react'
 import Trans from '@/components/Transaction'
 const page = () => {
   return (
-    <div><Trans/></div>
+    <div className="mt-20"><Trans/></div>
   )
 }
 

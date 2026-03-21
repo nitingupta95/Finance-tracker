@@ -19,7 +19,7 @@ const Page = () => {
   }, []);
   
   return (
-    <div className="my-20">
+    <div className="mt-20">
         
           <Dashboard transactions={transactions} />
     </div>

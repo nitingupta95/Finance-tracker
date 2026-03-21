@@ -4,11 +4,12 @@ import { Button } from "./button";
 import { PenBox, LayoutDashboard, IndianRupee } from "lucide-react";
 import Link from "next/link";
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import Image from "next/image";
 
 const Header = () => {
   const router = useRouter();
+  const pathname = usePathname();
 
   const handleNavigation = (section: string) => {
     if (typeof window === "undefined") return;
@@ -60,21 +61,30 @@ const Header = () => {
         <div className="flex items-center space-x-4">
           <SignedIn>
             <Link href="/budget">
-              <Button variant="outline">
+              <Button 
+                variant="outline"
+                className={pathname === '/budget' ? 'bg-black text-white hover:bg-black/90 hover:text-white cursor-pointer' : 'hover:cursor-pointer '}
+              >
                 <IndianRupee size={18} />
                 <span className="hidden md:inline">Budget</span>
               </Button>
             </Link>
 
             <Link href="/dashboard">
-              <Button variant="outline">
+              <Button 
+                variant="outline"
+                className={pathname === '/dashboard' ? 'bg-black text-white hover:bg-black/90 hover:text-white cursor-pointer' : 'hover:cursor-pointer '}
+              >
                 <LayoutDashboard size={18} />
                 <span className="hidden md:inline">Dashboard</span>
               </Button>
             </Link>
 
             <Link href="/transaction">
-              <Button className="flex items-center gap-2">
+              <Button 
+                variant="outline" 
+                className={`flex hover:cursor-pointer items-center gap-2 ${pathname === '/transaction' ? 'bg-black text-white hover:bg-black/90 hover:text-white cursor-pointer' : ''}`}
+              >
                 <PenBox size={18} />
                 <span className="hidden md:inline">Add Transaction</span>
               </Button>

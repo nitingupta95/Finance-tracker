@@ -3,63 +3,64 @@
 import { connectDB } from '@/lib/db';
 import { Budget } from '@/lib/model/budget';
 import { NextResponse } from 'next/server';
-import { auth } from "@clerk/nextjs/server"; // ✅ Correct import
+import { auth } from "@clerk/nextjs/server";
+import { budgetSchema } from '@/lib/validations/budget';
+import { handleApiError, ApiError, ErrorMessages } from '@/lib/apiError';
 
 // GET budgets for logged-in user
 export async function GET() {
   try {
-    const { userId } = await auth(); // ✅ AWAIT auth()
+    const { userId } = await auth();
 
     if (!userId) {
-      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+      throw new ApiError(401, ErrorMessages.UNAUTHORIZED);
     }
 
     await connectDB();
 
-    const budgets = await Budget.find({ userId }).sort({ createdAt: -1 }); // ✅ userId filter
+    const budgets = await Budget.find({ userId }).sort({ createdAt: -1 });
     return NextResponse.json(budgets, { status: 200 });
 
   } catch (error) {
-    console.error("GET /api/budget error:", error);
-    return NextResponse.json({ message: 'Failed to fetch budgets' }, { status: 500 });
+    return handleApiError(error);
   }
 }
 
 // POST new budget
 export async function POST(req: Request) {
   try {
-    const { userId } = await auth(); // ✅ AWAIT auth()
+    const { userId } = await auth();
 
     if (!userId) {
-      return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
+      throw new ApiError(401, ErrorMessages.UNAUTHORIZED);
     }
 
     await connectDB();
 
     const body = await req.json();
-    const { category, amount, period, startDate, endDate } = body;
 
-    if (!category || !amount || !period || !startDate) {
-      return NextResponse.json(
-        { message: 'Missing required fields' },
-        { status: 400 }
-      );
+    // Validate input
+    const validationResult = budgetSchema.safeParse(body);
+
+    if (!validationResult.success) {
+      throw new ApiError(400, ErrorMessages.INVALID_INPUT, validationResult.error.issues);
     }
+
+    const { category, amount, period, startDate, endDate } = validationResult.data;
 
     const newBudget = await Budget.create({
       category,
       amount,
       period,
       startDate,
-      endDate,
+      endDate: endDate || undefined,
       isActive: true,
-      userId, // ✅ Save userId with entry
+      userId,
     });
 
     return NextResponse.json(newBudget, { status: 201 });
 
   } catch (error) {
-    console.error("POST /api/budget error:", error);
-    return NextResponse.json({ message: 'Failed to create budget' }, { status: 500 });
+    return handleApiError(error);
   }
 }

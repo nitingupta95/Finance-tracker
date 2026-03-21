@@ -120,3 +120,26 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Hide Clerk Brand References */
+.clerk-watermark,
+.cl-watermark {
+  display: none !important;
+}
+/* Aggressive hide for Clerk dev mode banner & watermark container */
+div:has(> a[href*="clerk.com"]),
+div:has(> a[href*="clerk.dev"]) {
+  display: none !important;
+}
+
+/* Hide the development badge striped banner specifically */
+.cl-card + div,
+.cl-rootBox > div > div:nth-child(2) {
+  display: none !important;
+}
+
+/* Hide standalone Development mode badge in UserButton / Profile popovers */
+[class*="cl-userButtonPopoverCard"] > div:last-child:not(:has(button)):not(:has(a)),
+[class*="cl-profileCard"] > div:last-child:not(:has(button)):not(:has(a)) {
+  display: none !important;
+}

@@ -17,12 +17,17 @@ const TransactionSchema = new Schema<ITransaction>(
     description: { type: String, required: true },
     date: { type: String, required: true },
     category: { type: String },
-    userId: { type: String, required: true },
+    userId: { type: String, required: true, index: true },
   },
   {
     timestamps: true,
   }
 );
+
+// Add compound indexes for better query performance
+TransactionSchema.index({ userId: 1, createdAt: -1 });
+TransactionSchema.index({ userId: 1, category: 1 });
+TransactionSchema.index({ userId: 1, date: 1 });
 
 export const Transaction =
   models.Transaction || model<ITransaction>('Transaction', TransactionSchema);

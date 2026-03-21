@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 
 import BudgetChart from './BudgetChart';
-import CategoryPieChart from './CategorypieChart';
+import CategoryPieChart from './CategoryPieChart';
 import MonthlyBarChart from './MonthlyBarchart';
 import SummaryCard from './SummaryCard';
 import { TransactionFormData } from '../../../types/transaction';
@@ -47,18 +47,31 @@ const Dashboard: React.FC<DashboardProps> = ({ transactions = [] }) => {
   const [dateRange, setDateRange] = useState('all');
   const [budgetData, setBudgetData] = useState<BudgetSummary[]>([]);
 
-  const totalExpenses = transactions.reduce((sum, t) => sum + t.amount, 0);
-  const avgTransaction = transactions.length > 0 ? totalExpenses / transactions.length : 0;
-  const transactionCount = transactions.length;
+  const currentYear = new Date().getFullYear();
+  const [selectedYear, setSelectedYear] = useState<number>(currentYear);
+
+  const availableYears = Array.from(new Set(transactions.map(t => new Date(t.date).getFullYear()))).sort((a, b) => b - a);
+  if (!availableYears.includes(currentYear)) {
+    availableYears.unshift(currentYear);
+  }
+
+  const yearTransactions = transactions.filter(t => new Date(t.date).getFullYear() === selectedYear);
+
+  const totalExpenses = yearTransactions.reduce((sum, t) => sum + t.amount, 0);
+  const avgTransaction = yearTransactions.length > 0 ? totalExpenses / yearTransactions.length : 0;
+  const transactionCount = yearTransactions.length;
 
   useEffect(() => {
     const fetchBudgetData = async () => {
       const res = await axios.get("/api/budget");
+      
+      const yearBudgets = res.data.filter((b: { startDate: string }) => new Date(b.startDate).getFullYear() === selectedYear);
+      const currentYearTransactions = transactions.filter(t => new Date(t.date).getFullYear() === selectedYear);
 
       const monthMap = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
       const transactionsByMonth: Record<number, TransactionFormData[]> = {};
 
-      transactions.forEach(t => {
+      currentYearTransactions.forEach(t => {
         const month = new Date(t.date).getMonth();
         transactionsByMonth[month] = transactionsByMonth[month] || [];
         transactionsByMonth[month].push(t);
@@ -67,7 +80,7 @@ const Dashboard: React.FC<DashboardProps> = ({ transactions = [] }) => {
       const summary: BudgetSummary[] = [];
 
       monthMap.forEach((monthName, monthIndex) => {
-        const monthBudgets = res.data.filter((b: { startDate: string }) => {
+        const monthBudgets = yearBudgets.filter((b: { startDate: string }) => {
           return new Date(b.startDate).getMonth() === monthIndex;
         });
 
@@ -87,13 +100,13 @@ const Dashboard: React.FC<DashboardProps> = ({ transactions = [] }) => {
     };
 
     fetchBudgetData();
-  }, [transactions]);
+  }, [transactions, selectedYear]);
 
   const currentMonth = new Date().toLocaleString('default', { month: 'short' });
   const currentBudget = budgetData.find(b => b.month === currentMonth);
   const monthlyBudget = currentBudget?.budget ?? 0;
 
-  const categoryData = transactions.reduce((acc, transaction) => {
+  const categoryData = yearTransactions.reduce((acc, transaction) => {
     const category = transaction.category || 'Other';
     const existing = acc.find(item => item.name === category);
     if (existing) {
@@ -107,7 +120,7 @@ const Dashboard: React.FC<DashboardProps> = ({ transactions = [] }) => {
   const monthMap = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
   const monthlyData = monthMap.map((month, index) => {
-    const monthExpenses = transactions
+    const monthExpenses = yearTransactions
       .filter(t => new Date(t.date).getMonth() === index)
       .reduce((sum, t) => sum + t.amount, 0);
     const monthBudget = budgetData.find(b => b.month === month)?.budget ?? 0;
@@ -120,7 +133,7 @@ const Dashboard: React.FC<DashboardProps> = ({ transactions = [] }) => {
     };
   });
 
-  const filteredTransactions = transactions.filter(transaction => {
+  const filteredTransactions = yearTransactions.filter(transaction => {
     const matchesSearch = transaction.description?.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = !selectedCategory || transaction.category === selectedCategory;
 
@@ -138,7 +151,7 @@ const Dashboard: React.FC<DashboardProps> = ({ transactions = [] }) => {
     return matchesSearch && matchesCategory && matchesDate;
   });
 
-  const categories = [...new Set(transactions.map(t => t.category).filter(Boolean))];
+  const categories = [...new Set(yearTransactions.map(t => t.category).filter(Boolean))];
 
 const handleExport = () => {
   const doc = new jsPDF();
@@ -315,10 +328,10 @@ const handleExport = () => {
 
         {/* Summary Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <SummaryCard title="Total Expenses" value={<><IndianRupee className="w-4 h-4" />{totalExpenses.toFixed(2)}</>} change={12.5} changeLabel="vs last month" icon={IndianRupee} color="blue" trend="up" />
-          <SummaryCard title="Monthly Budget" value={<><IndianRupee className="w-4 h-4" />{monthlyBudget.toFixed(2)}</>} change={-5.2} changeLabel="under budget" icon={PiggyBank} color="green" trend="down" />
-          <SummaryCard title="Avg Transaction" value={<><IndianRupee className="w-4 h-4" />{avgTransaction.toFixed(2)}</>} change={8.1} changeLabel="vs last month" icon={CreditCard} color="purple" trend="up" />
-          <SummaryCard title="Total Transactions" value={transactionCount.toString()} change={15.3} changeLabel="this month" icon={TrendingUp} color="orange" trend="up" />
+          <SummaryCard title="Total Expenses" value={<><IndianRupee className="w-4 h-4" />{totalExpenses.toFixed(2)}</>} changeLabel="vs last month" icon={IndianRupee} color="blue" trend="up" />
+          <SummaryCard title="Monthly Budget" value={<><IndianRupee className="w-4 h-4" />{monthlyBudget.toFixed(2)}</>}  changeLabel="under budget" icon={PiggyBank} color="green" trend="down" />
+          <SummaryCard title="Avg Transaction" value={<><IndianRupee className="w-4 h-4" />{avgTransaction.toFixed(2)}</>}  changeLabel="vs last month" icon={CreditCard} color="purple" trend="up" />
+          <SummaryCard title="Total Transactions" value={transactionCount.toString()} changeLabel="this month" icon={TrendingUp} color="orange" trend="up" />
         </div>
 
         {/* Charts */}
@@ -360,6 +373,11 @@ const handleExport = () => {
                 <option value="all">All Time</option>
                 <option value="week">Last Week</option>
                 <option value="month">Last Month</option>
+              </select>
+              <select value={selectedYear} onChange={(e) => setSelectedYear(Number(e.target.value))} className="px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                {availableYears.map(year => (
+                  <option key={year} value={year}>{year}</option>
+                ))}
               </select>
             </div>
           </div>

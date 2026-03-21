@@ -1,12 +1,15 @@
-export type Transaction = {
-   
+export interface Transaction {
+  _id?: string;
   amount: number;
   description: string;
   date: string;
   category?: string;
-};
+  userId?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
 
-export type TransactionFormData = Omit<Transaction, '_id'>;
+export type TransactionFormData = Omit<Transaction, '_id' | 'userId' | 'createdAt' | 'updatedAt'>;
 
 export const TRANSACTION_CATEGORIES = [
   'Food & Dining',

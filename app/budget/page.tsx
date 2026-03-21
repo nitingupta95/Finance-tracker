@@ -2,8 +2,8 @@
 import React, { useEffect, useState } from 'react';
 import { Plus, Target, TrendingUp, AlertCircle, Search, Filter } from 'lucide-react';
 import { Budget, BudgetFormData } from "../../types/budget";
-import BudgetForm from "../../components/budegtform";
-import BudgetCard from "../../components/budegtCard";
+import BudgetForm from "../../components/budgetForm";
+import BudgetCard from "../../components/budgetCard";
 import axios from "axios";
 
 // ✅ Removed unused prop
@@ -144,7 +144,7 @@ useEffect(() => {
   });
 
   return (
-    <div className="my-18 min-h-screen bg-gradient-to-br from-slate-50 via-emerald-50 to-teal-50 p-6">
+    <div className="mt-18 min-h-screen bg-gradient-to-br from-slate-50 via-emerald-50 to-teal-50 p-6">
       <div className="max-w-7xl mx-auto space-y-8">
         {/* Header */}
         <div className="flex items-center justify-between">

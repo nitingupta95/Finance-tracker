@@ -2,26 +2,51 @@ import mongoose from 'mongoose';
 
 const MONGODB_URI = process.env.MONGODB_URI || '';
 
-if (!MONGODB_URI) {
-  throw new Error('Please define the MONGODB_URI environment variable in .env.local');
+interface MongooseCache {
+  conn: typeof mongoose | null;
+  promise: Promise<typeof mongoose> | null;
 }
 
-let isConnected = false;
+// Use global cache to prevent multiple connections in development
+declare global {
+  var mongoose: MongooseCache | undefined;
+}
 
-export const connectDB = async () => {
-  if (isConnected) return;
+const cached: MongooseCache = global.mongoose || { conn: null, promise: null };
+
+if (!global.mongoose) {
+  global.mongoose = cached;
+}
+
+export const connectDB = async (): Promise<typeof mongoose> => {
+  if (!MONGODB_URI) {
+    throw new Error('Please define the MONGODB_URI environment variable in .env.local');
+  }
+  if (cached.conn) {
+    return cached.conn;
+  }
+
+  if (!cached.promise) {
+    const opts = {
+      dbName: 'personal-finance',
+      bufferCommands: false,
+    };
+
+    cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => {
+      console.log('✅ MongoDB connected');
+      return mongoose;
+    });
+  }
 
   try {
-    await mongoose.connect(MONGODB_URI, {
-      dbName: 'personal-finance',
-    });
-
-    isConnected = true;
-    console.log('✅ MongoDB connected');
-  } catch (error) {
-    console.error('❌ MongoDB connection error:', error);
-    throw error;
+    cached.conn = await cached.promise;
+  } catch (e) {
+    cached.promise = null;
+    console.error('❌ MongoDB connection error:', e);
+    throw e;
   }
+
+  return cached.conn;
 };
 
 

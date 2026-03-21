@@ -2,7 +2,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import TransactionForm from "./trasnactionForm";
+import TransactionForm from "./transactionForm";
 import { TransactionFormData } from "../types/transaction";
 import { Receipt, TrendingUp, Activity, IndianRupee } from "lucide-react";
 import axios from "axios";

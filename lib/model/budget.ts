@@ -29,11 +29,16 @@ const BudgetSchema = new Schema<IBudget>(
       },
     },
     isActive: { type: Boolean, default: true },
-    userId: { type: String, required: true },
+    userId: { type: String, required: true, index: true },
   },
   {
     timestamps: true,
   }
 );
+
+// Add compound indexes for better query performance
+BudgetSchema.index({ userId: 1, createdAt: -1 });
+BudgetSchema.index({ userId: 1, category: 1 });
+BudgetSchema.index({ userId: 1, isActive: 1 });
 
 export const Budget = models.Budget || model<IBudget>("Budget", BudgetSchema);
