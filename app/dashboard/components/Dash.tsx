@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 
 import BudgetChart from './BudgetChart';
-import CategoryPieChart from './CategoryPieChart';
+import CategoryPieChart from './CategorypieChart';
 import MonthlyBarChart from './MonthlyBarchart';
 import SummaryCard from './SummaryCard';
 import { TransactionFormData } from '../../../types/transaction';
