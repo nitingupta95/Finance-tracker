@@ -2,6 +2,9 @@
 import React, { useState } from 'react';
 import { IndianRupee, Calendar, FileText, Tag, Plus, Check, AlertCircle } from 'lucide-react';
 import {  TransactionFormData, TRANSACTION_CATEGORIES } from '../types/transaction';
+import { AiEntry } from './transaction/ai-entry';
+import { getAiHeaders } from '@/lib/ai/client';
+import { toast } from 'sonner';
 
 interface TransactionFormProps {
   onSubmit: (transaction: TransactionFormData) => void;
@@ -49,11 +52,33 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onSubmit, isLoading =
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (validateForm()) {
-      onSubmit(formData);
+      let finalData = { ...formData };
+      
+      if (!finalData.category) {
+        try {
+          const res = await fetch("/api/ai/categorize", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              ...getAiHeaders()
+            },
+            body: JSON.stringify({ merchant: finalData.description })
+          });
+          if (res.ok) {
+            const data = await res.json();
+            finalData.category = data.category;
+            toast.success(`Auto-categorized as ${data.category}`);
+          }
+        } catch (err) {
+          console.error("Auto-categorization failed", err);
+        }
+      }
+
+      onSubmit(finalData);
       setIsSubmitted(true);
       
       // Reset form after successful submission
@@ -96,6 +121,17 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onSubmit, isLoading =
         </div>
         
         <form onSubmit={handleSubmit} className="p-8 space-y-6">
+          <AiEntry onExtracted={(data: any) => {
+            setFormData(prev => ({
+              ...prev,
+              amount: data.amount || prev.amount,
+              description: data.merchant || prev.description,
+              date: data.date || prev.date,
+              category: data.category || prev.category
+            }));
+            setErrors({});
+          }} />
+
           {/* Amount Field */}
           <div className="space-y-2">
             <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">

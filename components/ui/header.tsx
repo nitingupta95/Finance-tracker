@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { Button } from "./button";
-import { PenBox, LayoutDashboard, IndianRupee } from "lucide-react";
+import { PenBox, LayoutDashboard, IndianRupee, Sparkles, Settings } from "lucide-react";
 import Link from "next/link";
 import { SignInButton, UserButton, useAuth } from "@clerk/nextjs";
 import { useRouter, usePathname } from "next/navigation";
@@ -91,6 +91,26 @@ const Header = () => {
                 >
                   <PenBox size={18} />
                   <span className="hidden md:inline">Add Transaction</span>
+                </Button>
+              </Link>
+
+              <Link href="/ai-advisor">
+                <Button 
+                  variant="outline" 
+                  className={`flex hover:cursor-pointer items-center gap-2 border-blue-200 hover:border-blue-300 ${pathname === '/ai-advisor' ? 'bg-blue-600 border-blue-600 text-white hover:bg-blue-700 cursor-pointer hover:text-white' : 'text-blue-600'}`}
+                >
+                  <Sparkles size={18} className={pathname === '/ai-advisor' ? 'text-white' : 'text-blue-500'} />
+                  <span className="hidden xl:inline">AI Advisor</span>
+                </Button>
+              </Link>
+
+              <Link href="/settings">
+                <Button 
+                  variant="outline" 
+                  title="AI Settings"
+                  className={`flex hover:cursor-pointer px-3 items-center gap-2 ${pathname === '/settings' ? 'bg-black text-white hover:bg-black/90 cursor-pointer hover:text-white' : ''}`}
+                >
+                  <Settings size={18} />
                 </Button>
               </Link>
             </>

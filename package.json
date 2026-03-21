@@ -9,9 +9,13 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@ai-sdk/google": "^3.0.52",
+    "@ai-sdk/openai": "^3.0.47",
     "@clerk/nextjs": "^7.0.6",
     "@clerk/ui": "^1.2.3",
+    "@google/genai": "^1.46.0",
     "@radix-ui/react-slot": "^1.2.3",
+    "ai": "^6.0.134",
     "axios": "^1.10.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",

@@ -10,6 +10,10 @@ import {
   Wallet,
   Shield,
   Bell,
+  Sparkles,
+  ReceiptText,
+  Tag,
+  Activity,
 } from "lucide-react";
 
 // Stats Data - Updated for personal finance metrics
@@ -59,33 +63,48 @@ export const featuresData = [
     description: "Compare monthly spending patterns and trends",
   },
   {
-    icon: () => <IndianRupee className="h-8 w-8 text-blue-600" />,
-    title: "Currency Support",
-    description: "Native support for Indian Rupee with proper formatting",
+    icon: () => <Sparkles className="h-8 w-8 text-blue-600" />,
+    title: "AI Financial Advisor",
+    description: "Get personalized, AI-driven advice and budget warnings based on your spending habits",
   },
   {
-    icon: () => <Bell className="h-8 w-8 text-blue-600" />,
-    title: "Budget Alerts",
-    description: "Get notified when approaching budget limits",
+    icon: () => <ReceiptText className="h-8 w-8 text-blue-600" />,
+    title: "Smart Receipt Scanner",
+    description: "Auto-fill transactions by simply uploading a picture of your receipt",
+  },
+  {
+    icon: () => <Tag className="h-8 w-8 text-blue-600" />,
+    title: "Auto-Categorization",
+    description: "Our AI automatically categorizes merchants and expenses to save you time",
+  },
+  {
+    icon: () => <Activity className="h-8 w-8 text-blue-600" />,
+    title: "Predictive Cash Flow",
+    description: "Project your end-of-month balance and automatically detect hidden subscriptions",
+  },
+  {
+    icon: () => <PieChart className="h-8 w-8 text-blue-600" />,
+    title: "Natural Language Entry",
+    description: "Just type 'Spent ₹150 on coffee' and the AI handles the rest automatically",
   },
 ];
 
 // How It Works Data - Updated for your workflow
 export const howItWorksData = [
   {
-    icon: () => <Wallet className="h-8 w-8 text-blue-600" />,
-    title: "1. Set Your Budget",
-    description: "Create monthly budgets for different spending categories",
+    icon: () => <Shield className="h-8 w-8 text-blue-600" />,
+    title: "1. Link Securely",
+    description: "Provide your own Gemini or OpenAI API key. It's safely stored locally on your device.",
   },
   {
-    icon: () => <CreditCard className="h-8 w-8 text-blue-600" />,
-    title: "2. Record Transactions",
-    description: "Add expenses manually or import from bank statements",
+    icon: () => <ReceiptText className="h-8 w-8 text-blue-600" />,
+    title: "2. Track with AI",
+    description: "Upload receipts, type naturally, or let our AI auto-categorize your manual entries.",
   },
   {
-    icon: () => <BarChart3 className="h-8 w-8 text-blue-600" />,
-    title: "3. Monitor & Adjust",
-    description: "Track your spending against budgets and adjust as needed",
+    icon: () => <Sparkles className="h-8 w-8 text-blue-600" />,
+    title: "3. Grow your Wealth",
+    description: "Receive AI-powered savings tips, budget alerts, and predictive cash flow analytics.",
   },
 ];
 
