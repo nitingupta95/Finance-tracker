@@ -6,6 +6,7 @@ import type { ReactNode } from "react";
 import {
   ClerkProvider
 } from '@clerk/nextjs'
+import { ui } from '@clerk/ui'
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,19 +22,20 @@ interface RootLayoutProps {
 export default function RootLayout({ children }: RootLayoutProps) {
   return ( 
     <ClerkProvider
+      ui={ui}
       appearance={{
-        layout: {
+        options: {
           logoImageUrl: "https://res.cloudinary.com/dugygdmtz/image/upload/v1751709885/Screenshot_2025-07-05_153429_f1idjd.png",
           socialButtonsVariant: "iconButton",
           logoPlacement: "inside",
         },
         variables: {
           colorPrimary: "#000000",
-          colorText: "#111827",
-          colorTextSecondary: "#6B7280",
+          colorForeground: "#111827",
+          colorMutedForeground: "#6B7280",
           colorBackground: "#ffffff",
-          colorInputBackground: "#ffffff",
-          colorInputText: "#111827",
+          colorInput: "#ffffff",
+          colorInputForeground: "#111827",
           borderRadius: "0.75rem",
           fontFamily: "inherit",
         },

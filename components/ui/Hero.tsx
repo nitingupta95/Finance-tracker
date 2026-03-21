@@ -3,7 +3,7 @@
 import React from "react"; 
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import Image from "next/image"; // ✅ Import Next.js Image
+import Image from "next/image"; 
 
 const HeroSection = () => { 
   return (
@@ -32,6 +32,7 @@ const HeroSection = () => {
               height={720}
               alt="Dashboard Preview"
               className="rounded-lg shadow-2xl border mx-auto"
+              priority
               unoptimized // 🔄 Optional: remove this if you want Next.js to optimize
             />
           </div>
