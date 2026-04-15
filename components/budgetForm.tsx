@@ -1,7 +1,8 @@
 "use client"
 import React, { useState } from 'react';
-import {  Calendar, Tag, Clock, Save, X, AlertCircle, IndianRupee } from 'lucide-react';
+import { Calendar, Tag, Clock, Save, X, AlertCircle, IndianRupee } from 'lucide-react';
 import { Budget, BudgetFormData, BUDGET_CATEGORIES, BUDGET_PERIODS } from "../types/budget";
+import { cn } from "@/lib/utils";
 
 interface BudgetFormProps {
   budget?: Budget;
@@ -82,71 +83,66 @@ const BudgetForm: React.FC<BudgetFormProps> = ({
   };
 
   const getFieldError = (field: keyof FormErrors) => errors[field];
-  const isFieldFocused = (field: string) => focusedField === field;
 
   return (
-    <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
-      <div className="bg-gradient-to-r from-emerald-600 to-teal-600 px-6 py-4">
+    <div className="bg-slate-900 border border-white/10 rounded-3xl shadow-2xl overflow-hidden max-w-xl w-full mx-auto">
+      {/* Header */}
+      <div className="bg-slate-950 px-8 py-6 border-b border-white/5">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-xl font-bold text-white">
-              {isEditing ? 'Edit Budget' : 'Create New Budget'}
+            <h3 className="text-xl font-bold text-white tracking-tight uppercase">
+              {isEditing ? 'Modify Allocation' : 'Establish Limit'}
             </h3>
-            <p className="text-emerald-100 text-sm">
-              {isEditing ? 'Update your budget settings' : 'Set spending limits for better financial control'}
+            <p className="text-slate-500 text-[10px] font-bold uppercase tracking-[0.2em] mt-1">
+               Refined Financial Governance
             </p>
           </div>
           <button
             onClick={onCancel}
-            className="text-white hover:bg-white/20 p-2 rounded-lg transition-colors"
+            className="text-slate-500 hover:text-white hover:bg-white/5 p-2 rounded-xl transition-all border border-transparent hover:border-white/5"
           >
-            <X className="w-5 h-5" />
+            <X size={20} />
           </button>
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="p-6 space-y-6">
+      <form onSubmit={handleSubmit} className="p-8 space-y-8">
         {/* Category Field */}
-        <div className="space-y-2">
-          <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-            <Tag className="w-4 h-4" />
-            Category
+        <div className="space-y-3">
+          <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
+            <Tag size={12} className="text-blue-500" />
+            Category Classification
           </label>
           <select
             value={formData.category}
             onChange={(e) => handleInputChange('category', e.target.value)}
-            onFocus={() => setFocusedField('category')}
-            onBlur={() => setFocusedField(null)}
-            className={`w-full px-4 py-3 rounded-xl border-2 transition-all duration-200 ${
-              getFieldError('category')
-                ? 'border-red-300 focus:border-red-500 focus:ring-red-200'
-                : isFieldFocused('category')
-                ? 'border-emerald-400 focus:border-emerald-500 focus:ring-emerald-200'
-                : 'border-gray-200 hover:border-gray-300'
-            } focus:outline-none focus:ring-4 bg-gray-50 focus:bg-white`}
+            className={cn(
+               "w-full bg-slate-950 border border-white/10 rounded-2xl px-5 py-3.5 text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all font-semibold",
+               getFieldError('category') && "border-rose-500/50 focus:ring-rose-500/20"
+            )}
           >
-            <option value="">Select a category...</option>
+            <option value="" className="bg-slate-950">Select category...</option>
             {BUDGET_CATEGORIES.map(category => (
-              <option key={category} value={category}>
+              <option key={category} value={category} className="bg-slate-950 text-white">
                 {category}
               </option>
             ))}
           </select>
           {getFieldError('category') && (
-            <p className="text-red-500 text-sm flex items-center gap-1">
-              <AlertCircle className="w-4 h-4" />
+            <p className="text-rose-500 text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5 mt-2">
+              <AlertCircle size={10} />
               {getFieldError('category')}
             </p>
           )}
         </div>
 
-        {/* Amount and Period Row */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Amount and Period Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Amount Field */}
-          <div className="space-y-2">
-            <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-              <IndianRupee className="w-4 h-4" />
-              Budget Amount
+          <div className="space-y-3">
+            <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
+              <IndianRupee size={12} className="text-blue-500" />
+              Allocation Amount
             </label>
             <div className="relative">
               <input
@@ -154,45 +150,34 @@ const BudgetForm: React.FC<BudgetFormProps> = ({
                 step="0.01"
                 value={formData.amount || ''}
                 onChange={(e) => handleInputChange('amount', parseFloat(e.target.value) || 0)}
-                onFocus={() => setFocusedField('amount')}
-                onBlur={() => setFocusedField(null)}
-                className={`w-full px-4 py-3 rounded-xl border-2 text-lg font-medium transition-all duration-200 ${
-                  getFieldError('amount')
-                    ? 'border-red-300 focus:border-red-500 focus:ring-red-200'
-                    : isFieldFocused('amount')
-                    ? 'border-emerald-400 focus:border-emerald-500 focus:ring-emerald-200'
-                    : 'border-gray-200 hover:border-gray-300'
-                } focus:outline-none focus:ring-4 bg-gray-50 focus:bg-white`}
+                className={cn(
+                   "w-full bg-slate-950 border border-white/10 rounded-2xl px-5 py-3.5 text-white text-xl font-bold tabular-nums focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all",
+                   getFieldError('amount') && "border-rose-500/50 focus:ring-rose-500/20"
+                )}
                 placeholder="0.00"
               /> 
             </div>
             {getFieldError('amount') && (
-              <p className="text-red-500 text-sm flex items-center gap-1">
-                <AlertCircle className="w-4 h-4" />
+              <p className="text-rose-500 text-[10px] font-black uppercase tracking-widest flex items-center gap-1.5 mt-2">
+                <AlertCircle size={10} />
                 {getFieldError('amount')}
               </p>
             )}
           </div>
 
           {/* Period Field */}
-          <div className="space-y-2">
-            <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-              <Clock className="w-4 h-4" />
-              Budget Period
+          <div className="space-y-3">
+            <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
+              <Clock size={12} className="text-blue-500" />
+              Execution Cycle
             </label>
             <select
               value={formData.period}
               onChange={(e) => handleInputChange('period', e.target.value as 'monthly' | 'weekly' | 'yearly')}
-              onFocus={() => setFocusedField('period')}
-              onBlur={() => setFocusedField(null)}
-              className={`w-full px-4 py-3 rounded-xl border-2 transition-all duration-200 ${
-                isFieldFocused('period')
-                  ? 'border-emerald-400 focus:border-emerald-500 focus:ring-emerald-200'
-                  : 'border-gray-200 hover:border-gray-300'
-              } focus:outline-none focus:ring-4 bg-gray-50 focus:bg-white`}
+              className="w-full bg-slate-950 border border-white/10 rounded-2xl px-5 py-3.5 text-white font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
             >
               {BUDGET_PERIODS.map(period => (
-                <option key={period.value} value={period.value}>
+                <option key={period.value} value={period.value} className="bg-slate-950">
                   {period.label}
                 </option>
               ))}
@@ -200,96 +185,66 @@ const BudgetForm: React.FC<BudgetFormProps> = ({
           </div>
         </div>
 
-        {/* Date Range Row */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Start Date Field */}
-          <div className="space-y-2">
-            <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-              <Calendar className="w-4 h-4" />
-              Start Date
+        {/* Date Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-3">
+            <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
+              <Calendar size={12} className="text-blue-500" />
+              Effective Date
             </label>
             <input
               type="date"
               value={formData.startDate}
               onChange={(e) => handleInputChange('startDate', e.target.value)}
-              onFocus={() => setFocusedField('startDate')}
-              onBlur={() => setFocusedField(null)}
-              className={`w-full px-4 py-3 rounded-xl border-2 transition-all duration-200 ${
-                getFieldError('startDate')
-                  ? 'border-red-300 focus:border-red-500 focus:ring-red-200'
-                  : isFieldFocused('startDate')
-                  ? 'border-emerald-400 focus:border-emerald-500 focus:ring-emerald-200'
-                  : 'border-gray-200 hover:border-gray-300'
-              } focus:outline-none focus:ring-4 bg-gray-50 focus:bg-white`}
+              className={cn(
+                 "w-full bg-slate-950 border border-white/10 rounded-2xl px-5 py-3.5 text-white font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all",
+                 getFieldError('startDate') && "border-rose-500/50 focus:ring-rose-500/20"
+              )}
             />
-            {getFieldError('startDate') && (
-              <p className="text-red-500 text-sm flex items-center gap-1">
-                <AlertCircle className="w-4 h-4" />
-                {getFieldError('startDate')}
-              </p>
-            )}
           </div>
 
-          {/* End Date Field */}
-          <div className="space-y-2">
-            <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-              <Calendar className="w-4 h-4" />
-              End Date <span className="text-xs text-gray-500 ml-1">(Optional)</span>
+          <div className="space-y-3">
+            <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest flex items-center gap-2">
+              <Calendar size={12} className="text-blue-500" />
+              Termination Date <span className="text-[8px] opacity-40 ml-1">(Optional)</span>
             </label>
             <input
               type="date"
               value={formData.endDate}
               onChange={(e) => handleInputChange('endDate', e.target.value)}
-              onFocus={() => setFocusedField('endDate')}
-              onBlur={() => setFocusedField(null)}
-              className={`w-full px-4 py-3 rounded-xl border-2 transition-all duration-200 ${
-                getFieldError('endDate')
-                  ? 'border-red-300 focus:border-red-500 focus:ring-red-200'
-                  : isFieldFocused('endDate')
-                  ? 'border-emerald-400 focus:border-emerald-500 focus:ring-emerald-200'
-                  : 'border-gray-200 hover:border-gray-300'
-              } focus:outline-none focus:ring-4 bg-gray-50 focus:bg-white`}
+              className={cn(
+                 "w-full bg-slate-950 border border-white/10 rounded-2xl px-5 py-3.5 text-white font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all",
+                 getFieldError('endDate') && "border-rose-500/50 focus:ring-rose-500/20"
+              )}
             />
-            {getFieldError('endDate') && (
-              <p className="text-red-500 text-sm flex items-center gap-1">
-                <AlertCircle className="w-4 h-4" />
-                {getFieldError('endDate')}
-              </p>
-            )}
           </div>
         </div>
 
-        {/* Action Buttons */}
-        <div className="flex gap-3 pt-4">
+        {/* Controls */}
+        <div className="flex gap-4 pt-4">
           <button
             type="button"
             onClick={onCancel}
-            className="flex-1 py-3 px-6 rounded-xl font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 transition-all duration-200"
+            className="flex-1 py-4 px-6 rounded-2xl font-bold text-slate-400 bg-white/5 border border-white/5 hover:border-white/10 hover:bg-white/10 transition-all uppercase tracking-widest text-xs"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={isLoading}
-            className={`flex-1 py-3 px-6 rounded-xl font-semibold text-white transition-all duration-200 transform ${
-              isLoading
-                ? 'bg-gray-400 cursor-not-allowed'
-                : 'bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 hover:shadow-lg hover:scale-105 active:scale-95'
-            } focus:outline-none focus:ring-4 focus:ring-emerald-200`}
+            className="flex-[2] py-4 px-6 rounded-2xl font-black text-white bg-blue-600 hover:bg-blue-500 shadow-xl shadow-blue-500/20 transition-all transform active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-[0.2em] text-xs"
           >
-            <div className="flex items-center justify-center gap-2">
-              {isLoading ? (
-                <>
-                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  {isEditing ? 'Updating...' : 'Creating...'}
-                </>
-              ) : (
-                <>
-                  <Save className="w-5 h-5" />
-                  {isEditing ? 'Update Budget' : 'Create Budget'}
-                </>
-              )}
-            </div>
+            {isLoading ? (
+              <span className="flex items-center justify-center gap-3">
+                 <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                 Processing...
+              </span>
+            ) : (
+              <span className="flex items-center justify-center gap-2">
+                 <Save size={16} />
+                 {isEditing ? 'Commit Changes' : 'Execute Plan'}
+              </span>
+            )}
           </button>
         </div>
       </form>
@@ -297,4 +252,4 @@ const BudgetForm: React.FC<BudgetFormProps> = ({
   );
 };
 
-export default BudgetForm;
+export default BudgetForm;

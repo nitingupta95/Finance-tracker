@@ -30,7 +30,6 @@ interface CustomTooltipProps {
   }[];
 }
 
-// ✅ FIXED: CustomLabel must be a plain function, not React.FC
 function CustomLabel({
   cx = 0,
   cy = 0,
@@ -55,8 +54,9 @@ function CustomLabel({
       fill="white"
       textAnchor={x > Number(cx) ? 'start' : 'end'}
       dominantBaseline="central"
-      fontSize={12}
+      fontSize={11}
       fontWeight="bold"
+      className="tabular-nums"
     >
       {`${((percent ?? 0) * 100).toFixed(0)}%`}
     </text>
@@ -64,7 +64,7 @@ function CustomLabel({
 }
 
 const COLORS = [
-  '#6366f1', '#f43f5e', '#10b981', '#fbbf24', '#a855f7',
+  '#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6',
   '#06b6d4', '#84cc16', '#f97316', '#ec4899', '#4f46e5',
 ];
 
@@ -76,15 +76,15 @@ const CategoryPieChart: React.FC<CategoryPieChartProps> = ({ data }) => {
       const item = payload[0];
       const percentage = ((item.value / total) * 100).toFixed(1);
       return (
-        <div className="bg-slate-900/90 backdrop-blur-xl border border-white/10 p-4 rounded-2xl shadow-2xl">
-          <p className="font-bold text-white mb-1 uppercase tracking-widest text-[10px] opacity-60">{item.name}</p>
-          <p className="text-xl font-black text-white">
+        <div className="bg-slate-900 border border-white/10 p-4 rounded-xl shadow-2xl">
+          <p className="font-bold text-slate-500 mb-1 uppercase tracking-widest text-[9px]">{item.name}</p>
+          <p className="text-xl font-black text-white tabular-nums">
             ₹{item.value.toLocaleString()}
           </p>
-          <div className="mt-2 h-1 w-full bg-white/5 rounded-full overflow-hidden">
-             <div className="h-full bg-indigo-500" style={{ width: `${percentage}%` }}></div>
+          <div className="mt-3 h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+             <div className="h-full bg-blue-500" style={{ width: `${percentage}%` }}></div>
           </div>
-          <p className="text-[10px] font-bold text-indigo-400 mt-1 uppercase">{percentage}% Share</p>
+          <p className="text-[9px] font-bold text-blue-400 mt-2 uppercase tracking-wide">{percentage}% Volume</p>
         </div>
       );
     }
@@ -94,12 +94,12 @@ const CategoryPieChart: React.FC<CategoryPieChartProps> = ({ data }) => {
   return (
     <div className="relative">
       <div className="flex items-center gap-4 mb-10">
-        <div className="bg-purple-500/20 p-3 rounded-2xl border border-purple-500/20 shadow-lg shadow-purple-500/10">
-          <PieChartIcon className="w-6 h-6 text-purple-400" />
+        <div className="bg-blue-500/10 p-3 rounded-xl border border-blue-500/20 shadow-lg text-blue-400">
+          <PieChartIcon size={22} />
         </div>
         <div>
-          <h3 className="text-xl font-bold text-white tracking-tight">Category Intelligence</h3>
-          <p className="text-slate-500 text-xs font-bold uppercase tracking-widest mt-0.5">Distribution of Capital</p>
+          <h3 className="text-lg font-bold text-white tracking-tight leading-tight uppercase">Category Distribution</h3>
+          <p className="text-slate-500 text-[10px] font-bold uppercase tracking-[0.2em] mt-1">Capital Segmentation</p>
         </div>
       </div>
 
@@ -110,15 +110,15 @@ const CategoryPieChart: React.FC<CategoryPieChartProps> = ({ data }) => {
               data={data}
               cx="50%"
               cy="50%"
-              innerRadius={60}
-              outerRadius={90}
-              paddingAngle={5}
+              innerRadius={65}
+              outerRadius={95}
+              paddingAngle={4}
               labelLine={false}
               label={CustomLabel}
               dataKey="value"
               stroke="none"
               animationBegin={0}
-              animationDuration={1500}
+              animationDuration={1200}
             >
               {data.map((entry, index) => (
                 <Cell
@@ -134,20 +134,17 @@ const CategoryPieChart: React.FC<CategoryPieChartProps> = ({ data }) => {
       </div>
 
       <div className="mt-8 pt-6 border-t border-white/5">
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-x-6 gap-y-3">
           {data.slice(0, 6).map((item, index) => (
-            <div key={item.name} className="group flex items-center justify-between p-2 rounded-xl hover:bg-white/5 transition-all">
+            <div key={item.name} className="group flex items-center justify-between py-1 transition-all">
               <div className="flex items-center gap-2.5">
                 <div
-                  className="w-2.5 h-2.5 rounded-full shadow-[0_0_8px_rgba(0,0,0,0.5)]"
-                  style={{ 
-                    backgroundColor: COLORS[index % COLORS.length],
-                    boxShadow: `0 0 10px ${COLORS[index % COLORS.length]}80`
-                  }}
+                  className="w-2 h-2 rounded-full"
+                  style={{ backgroundColor: COLORS[index % COLORS.length] }}
                 />
-                <span className="text-xs font-bold text-slate-400 group-hover:text-white transition-colors truncate">{item.name}</span>
+                <span className="text-[10px] font-bold text-slate-500 group-hover:text-slate-300 transition-colors uppercase truncate">{item.name}</span>
               </div>
-              <span className="text-sm font-black text-white ml-2">
+              <span className="text-xs font-black text-white tabular-nums">
                 ₹{item.value.toFixed(0)}
               </span>
             </div>

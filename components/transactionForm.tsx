@@ -1,10 +1,11 @@
 "use client"
 import React, { useState } from 'react';
 import { IndianRupee, Calendar, FileText, Tag, Plus, Check, AlertCircle } from 'lucide-react';
-import {  TransactionFormData, TRANSACTION_CATEGORIES } from '../types/transaction';
+import { TransactionFormData, TRANSACTION_CATEGORIES } from '../types/transaction';
 import { AiEntry } from './transaction/ai-entry';
 import { getAiHeaders } from '@/lib/ai/client';
 import { toast } from 'sonner';
+import { cn } from '@/lib/utils';
 
 interface TransactionFormProps {
   onSubmit: (transaction: TransactionFormData) => void;
@@ -13,7 +14,6 @@ interface TransactionFormProps {
 
 interface FormErrors {
   amount?: string;
-
   description?: string;
   date?: string;
   category?: string;
@@ -35,17 +35,17 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onSubmit, isLoading =
     const newErrors: FormErrors = {};
 
     if (!formData.amount || formData.amount <= 0) {
-      newErrors.amount = 'Amount must be greater than 0';
+      newErrors.amount = 'Quantum must be > 0';
     }
 
     if (!formData.description.trim()) {
-      newErrors.description = 'Description is required';
+      newErrors.description = 'Descriptor required';
     } else if (formData.description.length > 100) {
-      newErrors.description = 'Description must be less than 100 characters';
+      newErrors.description = 'Limit: 100 characters';
     }
 
     if (!formData.date) {
-      newErrors.date = 'Date is required';
+      newErrors.date = 'Temporal point required';
     }
 
     setErrors(newErrors);
@@ -71,7 +71,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onSubmit, isLoading =
           if (res.ok) {
             const data = await res.json();
             finalData.category = data.category;
-            toast.success(`Auto-categorized as ${data.category}`);
+            toast.success(`Vector: ${data.category}`);
           }
         } catch (err) {
           console.error("Auto-categorization failed", err);
@@ -81,7 +81,6 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onSubmit, isLoading =
       onSubmit(finalData);
       setIsSubmitted(true);
       
-      // Reset form after successful submission
       setTimeout(() => {
         setFormData({
           amount: 0,
@@ -95,26 +94,17 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onSubmit, isLoading =
   };
 
   const handleInputChange = (field: keyof TransactionFormData, value: string | number) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: value,
-    }));
-    
-    // Clear error when user starts typing
+    setFormData(prev => ({ ...prev, [field]: value }));
     if (errors[field]) {
-      setErrors(prev => ({
-        ...prev,
-        [field]: undefined,
-      }));
+      setErrors(prev => ({ ...prev, [field]: undefined }));
     }
   };
 
   const getFieldError = (field: keyof FormErrors) => errors[field];
-  const isFieldFocused = (field: string) => focusedField === field;
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <div className="mb-8">
+    <form onSubmit={handleSubmit} className="space-y-8">
+      <div className="mb-10">
         <AiEntry onExtracted={(data: any) => {
           setFormData(prev => ({
             ...prev,
@@ -129,9 +119,9 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onSubmit, isLoading =
 
       {/* Amount Field */}
       <div className="space-y-3">
-        <label className="text-[10px] font-black text-slate-500 flex items-center gap-2 uppercase tracking-widest">
-          <IndianRupee className="w-3.5 h-3.5 text-indigo-400" />
-          Quantum (INR)
+        <label className="text-[10px] font-black text-slate-500 flex items-center gap-2 uppercase tracking-[0.2em]">
+          <IndianRupee size={12} className="text-blue-500" />
+          Quantum Allocation
         </label>
         <div className="relative group">
           <input
@@ -139,20 +129,19 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onSubmit, isLoading =
             step="0.01"
             value={formData.amount || ''}
             onChange={(e) => handleInputChange('amount', parseFloat(e.target.value) || 0)}
-            onFocus={() => setFocusedField('amount')}
-            onBlur={() => setFocusedField(null)}
-            className={`glass-input w-full text-2xl font-black tracking-tight ${
-              getFieldError('amount') ? 'border-rose-500/50 focus:ring-rose-500/20' : ''
-            }`}
+            className={cn(
+               "w-full bg-slate-950 border border-white/10 rounded-2xl px-6 py-4 text-2xl font-black tabular-nums transition-all focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-white placeholder-slate-800",
+               getFieldError('amount') && "border-rose-500/50 focus:ring-rose-500/20"
+            )}
             placeholder="0.00"
           />
-          <div className="absolute right-4 top-1/2 transform -translate-y-1/2 text-slate-600 font-bold text-xs group-focus-within:text-indigo-400 transition-colors">
-            CURRENCY
+          <div className="absolute right-6 top-1/2 -translate-y-1/2 text-[9px] font-black text-slate-700 uppercase tracking-widest pointer-events-none group-focus-within:text-blue-500 transition-colors">
+            CURRENCY (INR)
           </div>
         </div>
         {getFieldError('amount') && (
-          <p className="text-rose-400 text-[10px] font-bold flex items-center gap-1.5 uppercase tracking-wide">
-            <AlertCircle className="w-3 h-3" />
+          <p className="text-rose-500 text-[10px] font-black flex items-center gap-1.5 uppercase tracking-widest mt-2">
+            <AlertCircle size={10} />
             {getFieldError('amount')}
           </p>
         )}
@@ -160,29 +149,28 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onSubmit, isLoading =
 
       {/* Description Field */}
       <div className="space-y-3">
-        <label className="text-[10px] font-black text-slate-500 flex items-center gap-2 uppercase tracking-widest">
-          <FileText className="w-3.5 h-3.5 text-indigo-400" />
-          Description Profile
+        <label className="text-[10px] font-black text-slate-500 flex items-center gap-2 uppercase tracking-[0.2em]">
+          <FileText size={12} className="text-blue-500" />
+          Descriptor Profile
         </label>
         <div className="relative group">
           <textarea
             value={formData.description}
             onChange={(e) => handleInputChange('description', e.target.value)}
-            onFocus={() => setFocusedField('description')}
-            onBlur={() => setFocusedField(null)}
             rows={2}
-            className={`glass-input w-full py-4 resize-none font-medium ${
-              getFieldError('description') ? 'border-rose-500/50 focus:ring-rose-500/20' : ''
-            }`}
-            placeholder="What was this expenditure for?"
+            className={cn(
+               "w-full bg-slate-950 border border-white/10 rounded-2xl px-6 py-4 resize-none font-bold placeholder-slate-800 transition-all focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-white leading-relaxed",
+               getFieldError('description') && "border-rose-500/50 focus:ring-rose-500/20"
+            )}
+            placeholder="Activity descriptor..."
           />
-          <div className="absolute bottom-3 right-4 text-[10px] font-bold text-slate-600 uppercase tracking-widest">
+          <div className="absolute bottom-4 right-6 text-[9px] font-black text-slate-700 uppercase tracking-widest">
             {formData.description.length}/100
           </div>
         </div>
         {getFieldError('description') && (
-          <p className="text-rose-400 text-[10px] font-bold flex items-center gap-1.5 uppercase tracking-wide">
-            <AlertCircle className="w-3 h-3" />
+          <p className="text-rose-500 text-[10px] font-black flex items-center gap-1.5 uppercase tracking-widest mt-2">
+            <AlertCircle size={10} />
             {getFieldError('description')}
           </p>
         )}
@@ -191,38 +179,35 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onSubmit, isLoading =
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Date Field */}
         <div className="space-y-3">
-          <label className="text-[10px] font-black text-slate-500 flex items-center gap-2 uppercase tracking-widest">
-            <Calendar className="w-3.5 h-3.5 text-indigo-400" />
+          <label className="text-[10px] font-black text-slate-500 flex items-center gap-2 uppercase tracking-[0.2em]">
+            <Calendar size={12} className="text-blue-500" />
             Temporal Point
           </label>
           <input
             type="date"
             value={formData.date}
             onChange={(e) => handleInputChange('date', e.target.value)}
-            onFocus={() => setFocusedField('date')}
-            onBlur={() => setFocusedField(null)}
-            className={`glass-input w-full font-bold ${
-              getFieldError('date') ? 'border-rose-500/50 focus:ring-rose-500/20' : ''
-            }`}
+            className={cn(
+               "w-full bg-slate-950 border border-white/10 rounded-2xl px-6 py-4 font-bold text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all",
+               getFieldError('date') && "border-rose-500/50 focus:ring-rose-500/20"
+            )}
           />
         </div>
 
         {/* Category Field */}
         <div className="space-y-3">
-          <label className="text-[10px] font-black text-slate-500 flex items-center gap-2 uppercase tracking-widest">
-            <Tag className="w-3.5 h-3.5 text-indigo-400" />
+          <label className="text-[10px] font-black text-slate-500 flex items-center gap-2 uppercase tracking-[0.2em]">
+            <Tag size={12} className="text-blue-500" />
             Domain Tag
           </label>
           <select
             value={formData.category}
             onChange={(e) => handleInputChange('category', e.target.value)}
-            onFocus={() => setFocusedField('category')}
-            onBlur={() => setFocusedField(null)}
-            className="glass-input w-full bg-slate-900 font-bold appearance-none cursor-pointer"
+            className="w-full bg-slate-950 border border-white/10 rounded-2xl px-6 py-4 font-bold text-white appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
           >
-            <option value="">Auto-Detect</option>
+            <option value="" className="bg-slate-950 text-slate-500">Auto-Detect Domain</option>
             {TRANSACTION_CATEGORIES.map(category => (
-              <option key={category} value={category}>
+              <option key={category} value={category} className="bg-slate-950">
                 {category}
               </option>
             ))}
@@ -231,32 +216,33 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onSubmit, isLoading =
       </div>
 
       {/* Submit Button */}
-      <div className="pt-6">
+      <div className="pt-8">
         <button
           type="submit"
           disabled={isLoading || isSubmitted}
-          className={`w-full py-5 px-8 rounded-2xl font-black text-sm uppercase tracking-widest transition-all duration-300 transform shadow-xl ${
+          className={cn(
+            "w-full py-5 px-8 rounded-2xl font-black text-xs uppercase tracking-[0.2em] transition-all transform shadow-xl active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed",
             isSubmitted
-              ? 'bg-emerald-500 text-white shadow-emerald-500/20'
+              ? 'bg-emerald-600 text-white shadow-emerald-500/10'
               : isLoading
-              ? 'bg-slate-800 text-slate-500 cursor-not-allowed border border-white/5'
-              : 'bg-indigo-600 text-white hover:bg-indigo-500 hover:scale-[1.02] active:scale-95 shadow-indigo-500/20'
-          } focus:outline-none focus:ring-4 focus:ring-indigo-500/20`}
+              ? 'bg-slate-800 text-slate-500 border border-white/5'
+              : 'bg-blue-600 text-white hover:bg-blue-500 shadow-blue-500/10'
+          )}
         >
           <div className="flex items-center justify-center gap-3">
             {isSubmitted ? (
               <>
-                <Check className="w-5 h-5" />
-                Journal Updated
+                <Check size={18} />
+                Registry Updated
               </>
             ) : isLoading ? (
               <>
-                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                Encrypting Data...
+                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                Processing...
               </>
             ) : (
               <>
-                <Plus className="w-5 h-5" />
+                <Plus size={18} />
                 Commit Transaction
               </>
             )}
@@ -267,4 +253,4 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onSubmit, isLoading =
   );
 };
 
-export default TransactionForm;
+export default TransactionForm;

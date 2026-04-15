@@ -6,6 +6,7 @@ import Link from "next/link";
 import { SignInButton, UserButton, useAuth } from "@clerk/nextjs";
 import { useRouter, usePathname } from "next/navigation";
 import Image from "next/image";
+import { cn } from "@/lib/utils";
 
 const Header = () => {
   const router = useRouter();
@@ -30,61 +31,54 @@ const Header = () => {
   };
 
   return (
-    <header className="fixed top-0 w-full bg-slate-950/50 backdrop-blur-2xl z-50 border-b border-white/5">
-      <nav className="container mx-auto px-4 py-3 flex items-center justify-between">
-        <Link href="/" className="hover:opacity-80 transition-opacity">
-          <Image
-            src="https://res.cloudinary.com/dugygdmtz/image/upload/v1751709885/Screenshot_2025-07-05_153429_f1idjd.png"
-            alt="Logo"
-            width={50}
-            height={50}
-            className="h-10 w-auto object-contain rounded-full shadow-lg shadow-indigo-500/20"
-          />
+    <header className="fixed top-0 w-full bg-slate-950/80 backdrop-blur-xl z-50 border-b border-white/5">
+      <nav className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+        <Link href="/" className="flex items-center gap-3 group transition-opacity hover:opacity-90">
+          <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center shadow-lg shadow-blue-500/20 group-hover:scale-105 transition-transform">
+             <IndianRupee size={22} className="text-white" />
+          </div>
+          <span className="text-2xl font-black text-white tracking-tighter uppercase">Welth</span>
         </Link>
 
         {/* Desktop Navigation */}
-        <div className="hidden md:flex items-center space-x-6">
-          {isLoaded && isSignedIn && (
+        <div className="hidden md:flex items-center space-x-8">
+          {isLoaded && isSignedIn ? (
             <>
-              <Link href="/dashboard" className={`text-sm font-medium transition-colors hover:text-white ${pathname === '/dashboard' ? 'text-white' : 'text-slate-400'}`}>
+              <Link href="/dashboard" className={cn("text-[10px] font-black uppercase tracking-widest transition-all", pathname === '/dashboard' ? 'text-blue-500' : 'text-slate-500 hover:text-white')}>
                 Dashboard
               </Link>
-              <Link href="/budget" className={`text-sm font-medium transition-colors hover:text-white ${pathname === '/budget' ? 'text-white' : 'text-slate-400'}`}>
+              <Link href="/budget" className={cn("text-[10px] font-black uppercase tracking-widest transition-all", pathname === '/budget' ? 'text-blue-500' : 'text-slate-500 hover:text-white')}>
                 Budgets
               </Link>
-              <Link href="/transaction" className={`text-sm font-medium transition-colors hover:text-white ${pathname === '/transaction' ? 'text-white' : 'text-slate-400'}`}>
+              <Link href="/transaction" className={cn("text-[10px] font-black uppercase tracking-widest transition-all", pathname === '/transaction' ? 'text-blue-500' : 'text-slate-500 hover:text-white')}>
                 Transactions
               </Link>
             </>
-          )}
-          {isLoaded && !isSignedIn && (
+          ) : (
             <>
-              <button
-                onClick={() => handleNavigation("features")}
-                className="text-sm font-medium text-slate-400 hover:text-white transition-colors"
-              >
+              <button onClick={() => handleNavigation("features")} className="text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-white transition-all">
                 Features
               </button>
-              <button
-                onClick={() => handleNavigation("testimonials")}
-                className="text-sm font-medium text-slate-400 hover:text-white transition-colors"
-              >
+              <button onClick={() => handleNavigation("testimonials")} className="text-[10px] font-black uppercase tracking-widest text-slate-500 hover:text-white transition-all">
                 Testimonials
               </button>
             </>
           )}
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-4">
           {isLoaded && isSignedIn && (
             <>
               <Link href="/ai-advisor" className="hidden sm:block">
                 <Button 
                   variant="outline" 
-                   className={`h-9 gap-2 border-indigo-500/30 bg-indigo-500/10 text-indigo-300 hover:bg-indigo-500 hover:text-white transition-all ${pathname === '/ai-advisor' ? 'bg-indigo-500 text-white' : ''}`}
+                  className={cn(
+                    "h-10 gap-2 border-blue-500/20 bg-blue-500/5 text-blue-400 hover:bg-blue-600 hover:text-white transition-all text-[10px] font-black uppercase tracking-widest rounded-xl",
+                    pathname === '/ai-advisor' && "bg-blue-600 text-white"
+                  )}
                 >
-                  <Sparkles size={16} />
-                  <span className="hidden lg:inline">AI Advisor</span>
+                  <Sparkles size={14} />
+                  <span>AI Advisor</span>
                 </Button>
               </Link>
 
@@ -92,7 +86,10 @@ const Header = () => {
                 <Button 
                   variant="ghost" 
                   size="icon"
-                  className={`h-9 w-9 text-slate-400 hover:text-white hover:bg-white/5 transition-all ${pathname === '/settings' ? 'text-white bg-white/10' : ''}`}
+                  className={cn(
+                    "h-10 w-10 text-slate-500 hover:text-white hover:bg-white/5 transition-all rounded-xl",
+                    pathname === '/settings' && "text-white bg-white/10"
+                  )}
                 >
                   <Settings size={18} />
                 </Button>
@@ -102,18 +99,18 @@ const Header = () => {
 
           {isLoaded && !isSignedIn && (
             <SignInButton forceRedirectUrl="/dashboard">
-              <Button variant="default" className="bg-white text-slate-950 hover:bg-slate-200 font-bold">
-                Get Started
+              <Button className="h-11 px-8 bg-white text-slate-950 hover:bg-blue-600 hover:text-white font-black text-xs uppercase tracking-widest rounded-xl transition-all shadow-xl shadow-white/5">
+                Initialize Access
               </Button>
             </SignInButton>
           )}
 
           {isLoaded && isSignedIn && (
-            <div className="pl-2 border-l border-white/10">
+            <div className="pl-4 border-l border-white/10 ml-2">
               <UserButton
                 appearance={{
                   elements: {
-                    avatarBox: "w-9 h-9 border border-white/20",
+                    avatarBox: "w-9 h-9 border border-white/20 rounded-xl",
                   },
                 }}
               />

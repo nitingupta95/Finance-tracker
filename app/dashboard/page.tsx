@@ -35,7 +35,7 @@ const Page = () => {
   }
 
   return (
-    <div className="mt-20">
+    <div>
           <Dashboard transactions={transactions} />
           <div className="pb-10">
              <AiCashflow transactions={transactions} />

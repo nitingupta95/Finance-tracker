@@ -21,6 +21,7 @@ import CategoryPieChart from './CategorypieChart';
 import MonthlyBarChart from './MonthlyBarchart';
 import SummaryCard from './SummaryCard';
 import { TransactionFormData } from '../../../types/transaction';
+import { cn } from '@/lib/utils';
 
 declare module 'jspdf' {
   interface jsPDF {
@@ -328,129 +329,160 @@ const handleExport = () => {
 };
 
   return (
-    <div className="min-h-screen bg-slate-950 p-6 pt-24 selection:bg-indigo-500/30">
-      <div className="max-w-7xl mx-auto space-y-8">
-        {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div>
-            <h1 className="text-4xl font-extrabold tracking-tight text-white mb-2">
-              Financial <span className="text-indigo-400">Intelligence</span>
-            </h1>
-            <p className="text-slate-400 font-medium">Precision tracking for your personal economy</p>
-            {hasDataInOtherYears && (
-              <div className="mt-4 p-4 glass-morphism rounded-2xl text-sm text-indigo-300 font-medium border border-indigo-500/20 shadow-lg shadow-indigo-500/10">
-                <span className="mr-2">✨</span> You have activity in other years! Switch above to explore history.
-              </div>
+    <div className="space-y-8">
+      {/* Year Selection Protocols */}
+      <div className="flex flex-wrap items-center gap-3 mb-4">
+        <div className="text-[10px] font-bold text-slate-500 mr-2 opacity-60">Temporal Context:</div>
+        {availableYears.map(year => (
+          <button 
+            key={year}
+            onClick={() => setSelectedYear(year)}
+            className={cn(
+              "px-5 py-2.5 rounded-2xl border transition-all text-xs font-bold shadow-xl",
+              selectedYear === year 
+                ? "bg-blue-600 text-white border-blue-500 shadow-blue-500/20" 
+                : "bg-white/[0.03] text-slate-500 border-white/5 hover:border-white/10 hover:bg-white/[0.05]"
             )}
-          </div>
+          >
+            {year}
+          </button>
+        ))}
+      </div>
+
+      {/* Overview Metrics */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <SummaryCard 
+          title="Total Expenses" 
+          value={<>₹{totalExpenses.toLocaleString()}</>} 
+          change={12.5} 
+          changeLabel={`Total for ${selectedYear}`} 
+          icon={IndianRupee} 
+          color="red" 
+          trend="up" 
+        />
+        <SummaryCard 
+          title="Monthly Budget" 
+          value={<>₹{monthlyBudget.toLocaleString()}</>} 
+          changeLabel="Planned Allocation" 
+          icon={PiggyBank} 
+          color="green" 
+          trend="neutral" 
+        />
+        <SummaryCard 
+          title="Avg Transaction" 
+          value={<>₹{avgTransaction.toLocaleString()}</>} 
+          change={5.2}
+          changeLabel="Per Entry Average" 
+          icon={CreditCard} 
+          color="blue" 
+          trend="up" 
+        />
+        <SummaryCard 
+          title="Transaction Count" 
+          value={transactionCount.toString()} 
+          changeLabel="System Entries" 
+          icon={TrendingUp} 
+          color="orange" 
+          trend="up" 
+        />
+      </div>
+
+      {/* Analytics Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="fintech-card p-6 rounded-2xl overflow-hidden">
+           <BudgetChart data={budgetData} />
+        </div>
+        <div className="fintech-card p-6 rounded-2xl overflow-hidden">
+           <CategoryPieChart data={categoryData} />
+        </div>
+      </div>
+
+      <div className="fintech-card p-6 rounded-2xl overflow-hidden">
+        <MonthlyBarChart data={monthlyData} />
+      </div>
+
+      {/* Primary Journal */}
+      <div className="fintech-card rounded-2xl overflow-hidden">
+        <div className="px-6 py-5 border-b border-white/5 bg-white/2 flex items-center justify-between">
+          <h2 className="text-xl font-bold text-white tracking-tight flex items-center gap-2">
+            <Activity className="w-5 h-5 text-blue-400" />
+            Recent Activity Journal
+          </h2>
+          <button 
+            onClick={handleExport}
+            className="flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white rounded-xl border border-white/5 transition-all text-[10px] font-bold tracking-wider"
+          >
+            <Download size={14} />
+            Export Registry
+          </button>
         </div>
 
-        {/* Summary Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <SummaryCard title="Total Expenses" value={<>₹{totalExpenses.toLocaleString()}</>} changeLabel="Total layout" icon={IndianRupee} color="red" trend="up" />
-          <SummaryCard title="Monthly Budget" value={<>₹{monthlyBudget.toLocaleString()}</>} changeLabel="Allocation" icon={PiggyBank} color="green" trend="neutral" />
-          <SummaryCard title="Avg Transaction" value={<>₹{avgTransaction.toLocaleString()}</>} changeLabel="Per entry" icon={CreditCard} color="purple" trend="up" />
-          <SummaryCard title="Activity Count" value={transactionCount.toString()} changeLabel="Total entries" icon={TrendingUp} color="orange" trend="up" />
-        </div>
-
-        {/* Charts Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <div className="glass-card p-6 overflow-hidden">
-             <BudgetChart data={budgetData} />
-          </div>
-          <div className="glass-card p-6 overflow-hidden">
-             <CategoryPieChart data={categoryData} />
-          </div>
-        </div>
-
-        <div className="glass-card p-6 overflow-hidden">
-          <MonthlyBarChart data={monthlyData} />
-        </div>
-
-        {/* Transactions List */}
-        <div className="glass-card overflow-hidden">
-          <div className="px-6 py-5 border-b border-white/5 bg-white/5">
-            <h3 className="text-lg font-bold text-white flex items-center gap-2">
-              <Activity className="w-5 h-5 text-indigo-400" />
-              Recent Intelligence
-            </h3>
-          </div>
-
-          {/* Filters */}
-          <div className="p-6 border-b border-white/5">
-            <div className="flex flex-col lg:flex-row gap-4">
-              <div className="flex-1 relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500 w-4 h-4" />
-                <input
-                  type="text"
-                  placeholder="Search transactions..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="glass-input w-full pl-10"
-                />
-              </div>
-              <div className="flex flex-wrap gap-4">
-                <select value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)} className="glass-input bg-slate-900">
-                  <option value="">All Categories</option>
-                  {categories.map(category => (
-                    <option key={category} value={category}>{category}</option>
-                  ))}
-                </select>
-                <select value={dateRange} onChange={(e) => setDateRange(e.target.value)} className="glass-input bg-slate-900">
-                  <option value="all">All Time</option>
-                  <option value="week">Last Week</option>
-                  <option value="month">Last Month</option>
-                </select>
-              </div>
+        {/* Filters */}
+        <div className="p-6 border-b border-white/5">
+          <div className="flex flex-col lg:flex-row gap-4">
+            <div className="flex-1 relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-500 w-4 h-4" />
+              <input
+                type="text"
+                placeholder="Search journal protocols..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full bg-slate-950 border border-white/5 rounded-xl pl-10 pr-4 py-3 text-sm text-white focus:outline-none focus:border-blue-500/50 transition-all font-bold placeholder:text-slate-700"
+              />
             </div>
           </div>
+        </div>
 
-          {/* Table Area */}
-          <div className="p-0">
-            {filteredTransactions.length === 0 ? (
-              <div className="text-center py-20 px-6">
-                <div className="inline-flex p-4 rounded-full bg-slate-900 border border-white/5 mb-4 shadow-xl shadow-black/50">
-                  <CreditCard className="w-8 h-8 text-slate-700" />
-                </div>
-                <p className="text-slate-500 font-medium">No intelligence data found for the current filter</p>
+        {/* Ledger */}
+        <div className="p-0">
+          {filteredTransactions.length === 0 ? (
+            <div className="text-center py-24 px-6">
+              <div className="inline-flex p-4 rounded-3xl bg-slate-900 border border-white/5 mb-4">
+                <CreditCard className="w-8 h-8 text-slate-700" />
               </div>
-            ) : (
-              <div className="divide-y divide-white/5">
-                {filteredTransactions.slice(0, 10).map((transaction, index) => (
-                  <div key={index} className="group flex items-center justify-between p-5 hover:bg-white/5 transition-all duration-300">
-                    <div className="flex items-center gap-4">
-                       <div className="w-10 h-10 rounded-xl bg-slate-900 border border-white/10 flex items-center justify-center text-slate-400 group-hover:bg-indigo-500/10 group-hover:text-indigo-400 transition-colors">
-                          <Receipt className="w-5 h-5" />
-                       </div>
-                       <div>
-                          <div className="font-bold text-white group-hover:text-indigo-300 transition-colors">{transaction.description}</div>
-                          <div className="text-xs text-slate-500 font-medium mt-0.5">
-                            {new Date(transaction.date).toLocaleDateString()}
-                            {transaction.category && <span className="mx-2 opacity-30">|</span>}
-                            {transaction.category}
-                          </div>
-                       </div>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-lg font-extrabold text-white flex items-center justify-end gap-1">
-                        <span className="text-slate-500 text-sm font-bold">₹</span>
-                        {transaction.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}
-                      </div>
-                      <div className="text-[10px] text-indigo-400/60 font-black uppercase tracking-widest mt-1">Processed</div>
-                    </div>
+              <p className="text-slate-500 font-bold text-xs">No records matching the current selection</p>
+            </div>
+          ) : (
+            <div className="divide-y divide-white/5">
+              {filteredTransactions.slice(0, 10).map((transaction, index) => (
+                <div key={index} className="group flex items-center justify-between p-5 hover:bg-white/2 transition-all duration-300">
+                  <div className="flex items-center gap-5">
+                     <div className="w-11 h-11 rounded-2xl bg-white/5 border border-white/5 flex items-center justify-center text-slate-500 group-hover:bg-blue-500/10 group-hover:text-blue-400 group-hover:border-blue-500/20 transition-all shadow-xl">
+                        <Receipt className="w-5.5 h-5.5" />
+                     </div>
+                     <div>
+                        <div className="font-bold text-white text-lg group-hover:text-blue-300 transition-colors truncate max-w-[200px] md:max-w-md">
+                          {transaction.description}
+                        </div>
+                        <div className="text-[10px] text-slate-500 font-bold mt-1 opacity-60">
+                          {new Date(transaction.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
+                          {transaction.category && <span className="mx-2 text-slate-700">/</span>}
+                          {transaction.category}
+                        </div>
+                     </div>
                   </div>
-                ))}
-              </div>
-            )}
-            
-            {filteredTransactions.length > 0 && (
-              <div className="p-4 bg-white/5 text-center">
-                <button className="text-xs font-bold text-slate-500 hover:text-indigo-400 transition-colors uppercase tracking-widest">
-                  View Full Transaction Journal
-                </button>
-              </div>
-            )}
-          </div>
+                  <div className="text-right">
+                    <div className="text-xl font-bold text-white flex items-center justify-end gap-1.5 tabular-nums">
+                      <span className="text-slate-600 text-sm font-bold">₹</span>
+                      {transaction.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    </div>
+                    <div className="text-[9px] text-blue-500/60 font-bold mt-1">Confirmed</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+          
+          {filteredTransactions.length > 0 && (
+            <div className="p-4 bg-white/2 border-t border-white/5 text-center">
+              <button 
+                onClick={() => window.location.href = '/transaction'}
+                className="text-[10px] font-bold text-slate-500 hover:text-blue-400 transition-colors tracking-widest"
+              >
+                Access Full Transaction Journal
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>

@@ -43,15 +43,16 @@
   --radius-xl: calc(var(--radius) + 4px);
 }
 
+/* Fine-tuned Professional Tokens */
 :root {
-  --radius: 0.625rem;
+  --radius: 0.75rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
+  --primary: oklch(0.488 0.243 264.376); /* Royal Blue */
   --primary-foreground: oklch(0.985 0 0);
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
@@ -62,54 +63,33 @@
   --destructive: oklch(0.577 0.245 27.325);
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
-}
-
-.dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
+  --ring: oklch(0.488 0.243 264.376);
   --chart-1: oklch(0.488 0.243 264.376);
   --chart-2: oklch(0.696 0.17 162.48);
   --chart-3: oklch(0.769 0.188 70.08);
   --chart-4: oklch(0.627 0.265 303.9);
   --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+}
+
+.dark {
+  --background: #020617; /* Deepest Navy (Slate-950) */
+  --foreground: #f8fafc;
+  --card: #0f172a; /* Slate-900 */
+  --card-foreground: #f8fafc;
+  --popover: #0f172a;
+  --popover-foreground: #f8fafc;
+  --primary: #3b82f6; /* Modern Blue */
+  --primary-foreground: #ffffff;
+  --secondary: #1e293b;
+  --secondary-foreground: #f8fafc;
+  --muted: #1e293b;
+  --muted-foreground: #94a3b8;
+  --accent: #1e293b;
+  --accent-foreground: #f8fafc;
+  --destructive: #ef4444;
+  --border: rgba(255, 255, 255, 0.08);
+  --input: rgba(255, 255, 255, 0.05);
+  --ring: #3b82f6;
 }
 
 @layer base {
@@ -118,81 +98,68 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+  /* Precise Numerical Alignment */
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
   }
 }
 
-/* Hide Clerk Brand References */
-.clerk-watermark,
-.cl-watermark {
-  display: none !important;
-}
-/* Aggressive hide for Clerk dev mode banner & watermark container */
-div:has(> a[href*="clerk.com"]),
-div:has(> a[href*="clerk.dev"]) {
-  display: none !important;
-}
+/* Hide Clerk Watermarks */
+.clerk-watermark, .cl-watermark { display: none !important; }
 
-/* Hide the development badge striped banner specifically */
-.cl-card + div,
-.cl-rootBox > div > div:nth-child(2) {
-  display: none !important;
-}
-
-/* Hide standalone Development mode badge in UserButton / Profile popovers */
-[class*="cl-userButtonPopoverCard"] > div:last-child:not(:has(button)):not(:has(a)),
-[class*="cl-profileCard"] > div:last-child:not(:has(button)):not(:has(a)) {
-  display: none !important;
-}
-
-/* Premium Styles & Glassmorphism */
+/* FinTech Premium Utilities */
 @layer utilities {
-  .glass-card {
-    @apply bg-white/5 backdrop-blur-xl border border-white/10 shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] transition-all duration-300;
+  .fintech-card {
+    @apply bg-slate-900/50 border border-white/5 shadow-xl backdrop-blur-md transition-all duration-300;
   }
   
-  .glass-card:hover {
-    @apply bg-white/10 border-white/20 shadow-[0_8px_32px_0_rgba(99,102,241,0.2)];
+  .fintech-card:hover {
+    @apply border-blue-500/20 bg-slate-900/80;
   }
 
-  .glass-morphism {
-    @apply backdrop-blur-lg bg-white/5 border border-white/10;
+  .premium-gradient-text {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-blue-500 via-indigo-400 to-cyan-400;
   }
 
-  .glass-input {
-    @apply bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all;
+  .blue-gradient-bg {
+    @apply bg-gradient-to-br from-blue-600 to-indigo-700;
   }
 
-  .gradient-title {
-    @apply font-extrabold tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400;
+  .blue-gradient-glow {
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.2);
   }
 
-  .neon-glow {
-    box-shadow: 0 0 15px rgba(99, 102, 241, 0.5), 0 0 30px rgba(99, 102, 241, 0.3);
+  .nav-sidebar {
+    @apply bg-slate-950 border-r border-white/5 h-full transition-all duration-500 ease-in-out;
   }
-  
-  .hero-gradient {
-    background: radial-gradient(circle at center, rgba(99, 102, 241, 0.1) 0%, transparent 70%);
-  }
-  
-  .nav-glass {
-    @apply bg-black/60 backdrop-blur-2xl border-b border-white/5 sticky top-0 z-50;
+
+  .sidebar-icon {
+    @apply w-5 h-5 transition-colors duration-300;
   }
 }
 
-/* Custom Scrollbar for Premium Feel */
-::-webkit-scrollbar {
-  width: 8px;
+/* Clerk Professional Overrides */
+.cl-userButtonPopoverActionButtonText {
+  color: #f8fafc !important;
+  font-weight: 600 !important;
 }
 
-::-webkit-scrollbar-track {
-  background: transparent;
+.cl-userButtonPopoverHeaderTitle {
+  color: #ffffff !important;
+  font-weight: 700 !important;
 }
 
-::-webkit-scrollbar-thumb {
-  background: oklch(0.5 0.1 260 / 0.2);
-  border-radius: 10px;
+.cl-userButtonPopoverHeaderSubtitle {
+  color: #94a3b8 !important;
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: oklch(0.5 0.1 260 / 0.4);
+.cl-userButtonPopoverActionButtonIcon {
+  color: #3b82f6 !important;
+}
+
+.cl-userButtonPopoverCard {
+  background-color: #0f172a !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
 }

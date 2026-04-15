@@ -1,6 +1,7 @@
 import React from 'react';
-import { Edit, Trash2, AlertTriangle, CheckCircle, Clock } from 'lucide-react';
+import { Edit, Trash2, AlertTriangle, CheckCircle, Clock, IndianRupee } from 'lucide-react';
 import { Budget } from "../types/budget";
+import { cn } from "@/lib/utils";
 
 interface BudgetCardProps {
   budget: Budget;
@@ -19,127 +20,108 @@ const BudgetCard: React.FC<BudgetCardProps> = ({ budget, onEdit, onDelete }) => 
     return 'green';
   };
 
-  const getStatusIcon = () => {
-    if (percentage >= 100) return <AlertTriangle className="w-4 h-4" />;
-    if (percentage >= 80) return <Clock className="w-4 h-4" />;
-    return <CheckCircle className="w-4 h-4" />;
-  };
-
   const statusColor = getStatusColor();
-  const statusIcon = getStatusIcon();
 
-  const colorClasses = {
+  const colorVariants = {
     red: {
-      bg: 'from-rose-500 to-red-500',
-      text: 'text-rose-400',
-      glow: 'shadow-rose-500/20',
-      iconBg: 'bg-rose-500/20 text-rose-400',
-      progress: 'bg-rose-500',
+      text: "text-rose-500",
+      bg: "bg-rose-500/10",
+      border: "border-rose-500/20",
+      progress: "bg-rose-500",
+      icon: <AlertTriangle size={18} />
     },
     yellow: {
-      bg: 'from-amber-400 to-orange-500',
-      text: 'text-amber-400',
-      glow: 'shadow-amber-500/20',
-      iconBg: 'bg-amber-500/20 text-amber-400',
-      progress: 'bg-amber-500',
+      text: "text-amber-500",
+      bg: "bg-amber-500/10",
+      border: "border-amber-500/20",
+      progress: "bg-amber-500",
+      icon: <Clock size={18} />
     },
     green: {
-      bg: 'from-emerald-400 to-teal-500',
-      text: 'text-emerald-400',
-      glow: 'shadow-emerald-500/20',
-      iconBg: 'bg-emerald-500/20 text-emerald-400',
-      progress: 'bg-emerald-500',
-    },
+      text: "text-emerald-500",
+      bg: "bg-emerald-500/10",
+      border: "border-emerald-500/20",
+      progress: "bg-emerald-500",
+      icon: <CheckCircle size={18} />
+    }
   };
 
-  const colors = colorClasses[statusColor];
+  const theme = colorVariants[statusColor];
 
   return (
-    <div className="glass-card group p-6 relative overflow-hidden">
-      {/* Glow Effect */}
-      <div className={`absolute -right-4 -top-4 w-24 h-24 rounded-full blur-3xl opacity-20 pointer-events-none transition-all duration-700 group-hover:scale-150 group-hover:opacity-30 ${colors.bg.replace('from-', 'bg-')}`}></div>
-
+    <div className="fintech-card p-6 rounded-2xl group relative">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-4">
-          <div className={`p-2.5 rounded-xl ${colors.iconBg} border border-white/5 shadow-inner`}>
-            {React.cloneElement(statusIcon as React.ReactElement, { className: 'w-5 h-5' })}
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-blue-600/10 border border-blue-500/20 flex items-center justify-center text-blue-500">
+             <IndianRupee size={18} />
           </div>
           <div>
             <h3 className="font-bold text-white tracking-tight">{budget.category}</h3>
-            <p className="text-[10px] text-slate-500 font-extrabold uppercase tracking-widest">{budget.period}</p>
+            <p className="text-[9px] text-slate-500 font-bold tracking-wider uppercase">Active Allocation</p>
           </div>
         </div>
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
           <button
             onClick={() => onEdit(budget)}
             className="p-2 text-slate-500 hover:text-white hover:bg-white/5 rounded-lg transition-all"
           >
-            <Edit className="w-4 h-4" />
+            <Edit size={16} />
           </button>
           <button
             onClick={() => budget._id && onDelete(budget._id)}
             className="p-2 text-slate-500 hover:text-rose-400 hover:bg-rose-400/5 rounded-lg transition-all"
           >
-            <Trash2 className="w-4 h-4" />
+            <Trash2 size={16} />
           </button>
         </div>
       </div>
 
-      {/* Budget Progress */}
+      {/* Utilization */}
       <div className="space-y-4">
         <div className="flex justify-between items-end">
-          <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Utilization</span>
-          <span className={`text-xl font-black ${colors.text} tracking-tighter`}>
+          <span className="text-[10px] font-bold text-slate-500 tracking-wider leading-none">Utilization</span>
+          <span className={cn("text-2xl font-bold tracking-tight tabular-nums leading-none", theme.text)}>
             {percentage.toFixed(0)}%
           </span>
         </div>
         
-        <div className="w-full bg-slate-900 rounded-full h-2.5 overflow-hidden border border-white/5 shadow-inner">
+        <div className="w-full bg-white/5 rounded-full h-2 overflow-hidden border border-white/5">
           <div
-            className={`h-full bg-gradient-to-r ${colors.bg} transition-all duration-1000 ease-out rounded-full`}
-            style={{ 
-              width: `${Math.min(percentage, 100)}%`,
-              boxShadow: `0 0 15px ${colors.text}40`
-            }}
+            className={cn("h-full transition-all duration-1000 ease-out rounded-full", theme.progress)}
+            style={{ width: `${Math.min(percentage, 100)}%` }}
           />
         </div>
 
-        <div className="grid grid-cols-3 gap-2 pt-2">
+        <div className="grid grid-cols-3 gap-2 pt-4">
           <div className="text-center">
-            <div className="text-sm font-bold text-white">₹{budget.amount.toLocaleString()}</div>
-            <div className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-0.5">Limit</div>
+            <div className="text-sm font-bold text-white tabular-nums">₹{budget.amount.toLocaleString()}</div>
+            <div className="text-[9px] text-slate-500 font-bold tracking-wider mt-1 opacity-60">Limit</div>
           </div>
           <div className="text-center border-x border-white/5">
-            <div className="text-sm font-bold text-rose-400">₹{spent.toLocaleString()}</div>
-            <div className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-0.5">Burn</div>
+            <div className="text-sm font-bold text-rose-500 tabular-nums">₹{spent.toLocaleString()}</div>
+            <div className="text-[9px] text-slate-500 font-bold tracking-wider mt-1 opacity-60">Burn</div>
           </div>
           <div className="text-center">
-             <div className={`text-sm font-bold ${remaining >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+             <div className={cn("text-sm font-bold tabular-nums", remaining >= 0 ? 'text-emerald-500' : 'text-rose-500')}>
               ₹{Math.abs(remaining).toLocaleString()}
             </div>
-            <div className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-0.5">
-              {remaining >= 0 ? 'Slack' : 'Excess'}
+            <div className="text-[9px] text-slate-500 font-bold tracking-wider mt-1 opacity-60">
+              {remaining >= 0 ? 'Buffer' : 'Deficit'}
             </div>
           </div>
         </div>
       </div>
 
-      {/* Date Range */}
-      <div className="mt-8 pt-4 border-t border-white/5 flex justify-between items-center text-[10px] font-bold text-slate-600 uppercase tracking-tight">
-        <div className="flex items-center gap-1.5">
-          <div className="w-1 h-1 rounded-full bg-slate-700"></div>
-          <span>Start: {new Date(budget.startDate).toLocaleDateString()}</span>
-        </div>
+      {/* Meta Footer */}
+      <div className="mt-8 pt-4 border-t border-white/5 flex justify-between items-center text-[9px] font-bold text-slate-500 tracking-widest">
+        <span>Start: {new Date(budget.startDate).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}</span>
         {budget.endDate && (
-          <div className="flex items-center gap-1.5">
-            <span>End: {new Date(budget.endDate).toLocaleDateString()}</span>
-            <div className="w-1 h-1 rounded-full bg-slate-700"></div>
-          </div>
+          <span>End: {new Date(budget.endDate).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}</span>
         )}
       </div>
     </div>
   );
 };
 
-export default BudgetCard;
+export default BudgetCard;
