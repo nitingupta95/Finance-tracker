@@ -19,6 +19,7 @@ export async function GET() {
     await connectDB();
 
     const budgets = await Budget.find({ userId }).sort({ createdAt: -1 });
+    console.log(`📊 Budget API: Found ${budgets.length} budgets for user ${userId}`);
     return NextResponse.json(budgets, { status: 200 });
 
   } catch (error) {

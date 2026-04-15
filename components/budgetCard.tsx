@@ -30,109 +30,113 @@ const BudgetCard: React.FC<BudgetCardProps> = ({ budget, onEdit, onDelete }) => 
 
   const colorClasses = {
     red: {
-      bg: 'from-red-500 to-red-600',
-      text: 'text-red-600',
-      lightBg: 'bg-red-50',
-      border: 'border-red-200',
-      progress: 'bg-red-500',
+      bg: 'from-rose-500 to-red-500',
+      text: 'text-rose-400',
+      glow: 'shadow-rose-500/20',
+      iconBg: 'bg-rose-500/20 text-rose-400',
+      progress: 'bg-rose-500',
     },
     yellow: {
-      bg: 'from-yellow-500 to-orange-500',
-      text: 'text-yellow-600',
-      lightBg: 'bg-yellow-50',
-      border: 'border-yellow-200',
-      progress: 'bg-yellow-500',
+      bg: 'from-amber-400 to-orange-500',
+      text: 'text-amber-400',
+      glow: 'shadow-amber-500/20',
+      iconBg: 'bg-amber-500/20 text-amber-400',
+      progress: 'bg-amber-500',
     },
     green: {
-      bg: 'from-green-500 to-emerald-600',
-      text: 'text-green-600',
-      lightBg: 'bg-green-50',
-      border: 'border-green-200',
-      progress: 'bg-green-500',
+      bg: 'from-emerald-400 to-teal-500',
+      text: 'text-emerald-400',
+      glow: 'shadow-emerald-500/20',
+      iconBg: 'bg-emerald-500/20 text-emerald-400',
+      progress: 'bg-emerald-500',
     },
   };
 
   const colors = colorClasses[statusColor];
 
   return (
-    <div className={`bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 border-2 ${colors.border}`}>
-      <div className="p-6">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-3">
-            <div className={`bg-gradient-to-r ${colors.bg} p-2 rounded-lg text-white`}>
-              {statusIcon}
-            </div>
-            <div>
-              <h3 className="font-bold text-gray-900">{budget.category}</h3>
-              <p className="text-sm text-gray-600 capitalize">{budget.period}</p>
-            </div>
+    <div className="glass-card group p-6 relative overflow-hidden">
+      {/* Glow Effect */}
+      <div className={`absolute -right-4 -top-4 w-24 h-24 rounded-full blur-3xl opacity-20 pointer-events-none transition-all duration-700 group-hover:scale-150 group-hover:opacity-30 ${colors.bg.replace('from-', 'bg-')}`}></div>
+
+      {/* Header */}
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-4">
+          <div className={`p-2.5 rounded-xl ${colors.iconBg} border border-white/5 shadow-inner`}>
+            {React.cloneElement(statusIcon as React.ReactElement, { className: 'w-5 h-5' })}
           </div>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => onEdit(budget)}
-              className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-            >
-              <Edit className="w-4 h-4" />
-            </button>
-            <button
-              onClick={() => budget._id && onDelete(budget._id)}
-              className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-            >
-              <Trash2 className="w-4 h-4" />
-            </button>
+          <div>
+            <h3 className="font-bold text-white tracking-tight">{budget.category}</h3>
+            <p className="text-[10px] text-slate-500 font-extrabold uppercase tracking-widest">{budget.period}</p>
           </div>
         </div>
+        <div className="flex items-center gap-1">
+          <button
+            onClick={() => onEdit(budget)}
+            className="p-2 text-slate-500 hover:text-white hover:bg-white/5 rounded-lg transition-all"
+          >
+            <Edit className="w-4 h-4" />
+          </button>
+          <button
+            onClick={() => budget._id && onDelete(budget._id)}
+            className="p-2 text-slate-500 hover:text-rose-400 hover:bg-rose-400/5 rounded-lg transition-all"
+          >
+            <Trash2 className="w-4 h-4" />
+          </button>
+        </div>
+      </div>
 
-        {/* Budget Progress */}
-        <div className="space-y-3">
-          <div className="flex justify-between items-center">
-            <span className="text-sm font-medium text-gray-600">Progress</span>
-            <span className={`text-sm font-bold ${colors.text}`}>
-              {percentage.toFixed(1)}%
-            </span>
-          </div>
-          
-          <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
-            <div
-              className={`h-full ${colors.progress} transition-all duration-500 ease-out rounded-full`}
-              style={{ width: `${Math.min(percentage, 100)}%` }}
-            />
-          </div>
+      {/* Budget Progress */}
+      <div className="space-y-4">
+        <div className="flex justify-between items-end">
+          <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Utilization</span>
+          <span className={`text-xl font-black ${colors.text} tracking-tighter`}>
+            {percentage.toFixed(0)}%
+          </span>
+        </div>
+        
+        <div className="w-full bg-slate-900 rounded-full h-2.5 overflow-hidden border border-white/5 shadow-inner">
+          <div
+            className={`h-full bg-gradient-to-r ${colors.bg} transition-all duration-1000 ease-out rounded-full`}
+            style={{ 
+              width: `${Math.min(percentage, 100)}%`,
+              boxShadow: `0 0 15px ${colors.text}40`
+            }}
+          />
+        </div>
 
-          <div className="grid grid-cols-3 gap-4 text-center">
-            <div>
-              <div className="text-lg font-bold text-gray-900">
-                ₹{budget.amount.toFixed(2)}
-              </div>
-              <div className="text-xs text-gray-600">Budget</div>
+        <div className="grid grid-cols-3 gap-2 pt-2">
+          <div className="text-center">
+            <div className="text-sm font-bold text-white">₹{budget.amount.toLocaleString()}</div>
+            <div className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-0.5">Limit</div>
+          </div>
+          <div className="text-center border-x border-white/5">
+            <div className="text-sm font-bold text-rose-400">₹{spent.toLocaleString()}</div>
+            <div className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-0.5">Burn</div>
+          </div>
+          <div className="text-center">
+             <div className={`text-sm font-bold ${remaining >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+              ₹{Math.abs(remaining).toLocaleString()}
             </div>
-            <div>
-              <div className="text-lg font-bold text-red-600">
-                ₹{spent.toFixed(2)}
-              </div>
-              <div className="text-xs text-gray-600">Spent</div>
-            </div>
-            <div>
-              <div className={`text-lg font-bold ${remaining >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                	₹{Math.abs(remaining).toFixed(2)}
-              </div>
-              <div className="text-xs text-gray-600">
-                {remaining >= 0 ? 'Remaining' : 'Over Budget'}
-              </div>
+            <div className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mt-0.5">
+              {remaining >= 0 ? 'Slack' : 'Excess'}
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Date Range */}
-        <div className="mt-4 pt-4 border-t border-gray-100">
-          <div className="flex justify-between text-xs text-gray-500">
-            <span>Start: {new Date(budget.startDate).toLocaleDateString()}</span>
-            {budget.endDate && (
-              <span>End: {new Date(budget.endDate).toLocaleDateString()}</span>
-            )}
-          </div>
+      {/* Date Range */}
+      <div className="mt-8 pt-4 border-t border-white/5 flex justify-between items-center text-[10px] font-bold text-slate-600 uppercase tracking-tight">
+        <div className="flex items-center gap-1.5">
+          <div className="w-1 h-1 rounded-full bg-slate-700"></div>
+          <span>Start: {new Date(budget.startDate).toLocaleDateString()}</span>
         </div>
+        {budget.endDate && (
+          <div className="flex items-center gap-1.5">
+            <span>End: {new Date(budget.endDate).toLocaleDateString()}</span>
+            <div className="w-1 h-1 rounded-full bg-slate-700"></div>
+          </div>
+        )}
       </div>
     </div>
   );

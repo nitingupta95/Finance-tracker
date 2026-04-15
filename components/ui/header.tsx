@@ -30,30 +30,44 @@ const Header = () => {
   };
 
   return (
-    <header className="fixed top-0 w-full bg-white/80 backdrop-blur-md z-50 border-b">
-      <nav className="container mx-auto px-4 py-4 flex items-center justify-between">
-        <Link href="/">
+    <header className="fixed top-0 w-full bg-slate-950/50 backdrop-blur-2xl z-50 border-b border-white/5">
+      <nav className="container mx-auto px-4 py-3 flex items-center justify-between">
+        <Link href="/" className="hover:opacity-80 transition-opacity">
           <Image
             src="https://res.cloudinary.com/dugygdmtz/image/upload/v1751709885/Screenshot_2025-07-05_153429_f1idjd.png"
             alt="Logo"
-            width={60}
-            height={60}
-            className="h-12 w-auto object-contain rounded-full"
+            width={50}
+            height={50}
+            className="h-10 w-auto object-contain rounded-full shadow-lg shadow-indigo-500/20"
           />
         </Link>
 
-        <div className="hidden md:flex items-center space-x-8">
+        {/* Desktop Navigation */}
+        <div className="hidden md:flex items-center space-x-6">
+          {isLoaded && isSignedIn && (
+            <>
+              <Link href="/dashboard" className={`text-sm font-medium transition-colors hover:text-white ${pathname === '/dashboard' ? 'text-white' : 'text-slate-400'}`}>
+                Dashboard
+              </Link>
+              <Link href="/budget" className={`text-sm font-medium transition-colors hover:text-white ${pathname === '/budget' ? 'text-white' : 'text-slate-400'}`}>
+                Budgets
+              </Link>
+              <Link href="/transaction" className={`text-sm font-medium transition-colors hover:text-white ${pathname === '/transaction' ? 'text-white' : 'text-slate-400'}`}>
+                Transactions
+              </Link>
+            </>
+          )}
           {isLoaded && !isSignedIn && (
             <>
               <button
                 onClick={() => handleNavigation("features")}
-                className="text-gray-600 hover:text-blue-600"
+                className="text-sm font-medium text-slate-400 hover:text-white transition-colors"
               >
                 Features
               </button>
               <button
                 onClick={() => handleNavigation("testimonials")}
-                className="text-gray-600 hover:text-blue-600"
+                className="text-sm font-medium text-slate-400 hover:text-white transition-colors"
               >
                 Testimonials
               </button>
@@ -61,54 +75,24 @@ const Header = () => {
           )}
         </div>
 
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center gap-3">
           {isLoaded && isSignedIn && (
             <>
-              <Link href="/budget">
-                <Button 
-                  variant="outline"
-                  className={pathname === '/budget' ? 'bg-black text-white hover:bg-black/90 hover:text-white cursor-pointer' : 'hover:cursor-pointer '}
-                >
-                  <IndianRupee size={18} />
-                  <span className="hidden md:inline">Budget</span>
-                </Button>
-              </Link>
-
-              <Link href="/dashboard">
-                <Button 
-                  variant="outline"
-                  className={pathname === '/dashboard' ? 'bg-black text-white hover:bg-black/90 hover:text-white cursor-pointer' : 'hover:cursor-pointer '}
-                >
-                  <LayoutDashboard size={18} />
-                  <span className="hidden md:inline">Dashboard</span>
-                </Button>
-              </Link>
-
-              <Link href="/transaction">
+              <Link href="/ai-advisor" className="hidden sm:block">
                 <Button 
                   variant="outline" 
-                  className={`flex hover:cursor-pointer items-center gap-2 ${pathname === '/transaction' ? 'bg-black text-white hover:bg-black/90 hover:text-white cursor-pointer' : ''}`}
+                   className={`h-9 gap-2 border-indigo-500/30 bg-indigo-500/10 text-indigo-300 hover:bg-indigo-500 hover:text-white transition-all ${pathname === '/ai-advisor' ? 'bg-indigo-500 text-white' : ''}`}
                 >
-                  <PenBox size={18} />
-                  <span className="hidden md:inline">Add Transaction</span>
-                </Button>
-              </Link>
-
-              <Link href="/ai-advisor">
-                <Button 
-                  variant="outline" 
-                  className={`flex hover:cursor-pointer items-center gap-2 border-blue-200 hover:border-blue-300 ${pathname === '/ai-advisor' ? 'bg-blue-600 border-blue-600 text-white hover:bg-blue-700 cursor-pointer hover:text-white' : 'text-blue-600'}`}
-                >
-                  <Sparkles size={18} className={pathname === '/ai-advisor' ? 'text-white' : 'text-blue-500'} />
-                  <span className="hidden xl:inline">AI Advisor</span>
+                  <Sparkles size={16} />
+                  <span className="hidden lg:inline">AI Advisor</span>
                 </Button>
               </Link>
 
               <Link href="/settings">
                 <Button 
-                  variant="outline" 
-                  title="AI Settings"
-                  className={`flex hover:cursor-pointer px-3 items-center gap-2 ${pathname === '/settings' ? 'bg-black text-white hover:bg-black/90 cursor-pointer hover:text-white' : ''}`}
+                  variant="ghost" 
+                  size="icon"
+                  className={`h-9 w-9 text-slate-400 hover:text-white hover:bg-white/5 transition-all ${pathname === '/settings' ? 'text-white bg-white/10' : ''}`}
                 >
                   <Settings size={18} />
                 </Button>
@@ -118,18 +102,22 @@ const Header = () => {
 
           {isLoaded && !isSignedIn && (
             <SignInButton forceRedirectUrl="/dashboard">
-              <Button variant="outline">Login</Button>
+              <Button variant="default" className="bg-white text-slate-950 hover:bg-slate-200 font-bold">
+                Get Started
+              </Button>
             </SignInButton>
           )}
 
           {isLoaded && isSignedIn && (
-            <UserButton
-              appearance={{
-                elements: {
-                  avatarBox: "w-10 h-10",
-                },
-              }}
-            />
+            <div className="pl-2 border-l border-white/10">
+              <UserButton
+                appearance={{
+                  elements: {
+                    avatarBox: "w-9 h-9 border border-white/20",
+                  },
+                }}
+              />
+            </div>
           )}
         </div>
       </nav>

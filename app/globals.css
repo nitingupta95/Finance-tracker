@@ -143,3 +143,56 @@ div:has(> a[href*="clerk.dev"]) {
 [class*="cl-profileCard"] > div:last-child:not(:has(button)):not(:has(a)) {
   display: none !important;
 }
+
+/* Premium Styles & Glassmorphism */
+@layer utilities {
+  .glass-card {
+    @apply bg-white/5 backdrop-blur-xl border border-white/10 shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] transition-all duration-300;
+  }
+  
+  .glass-card:hover {
+    @apply bg-white/10 border-white/20 shadow-[0_8px_32px_0_rgba(99,102,241,0.2)];
+  }
+
+  .glass-morphism {
+    @apply backdrop-blur-lg bg-white/5 border border-white/10;
+  }
+
+  .glass-input {
+    @apply bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all;
+  }
+
+  .gradient-title {
+    @apply font-extrabold tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400;
+  }
+
+  .neon-glow {
+    box-shadow: 0 0 15px rgba(99, 102, 241, 0.5), 0 0 30px rgba(99, 102, 241, 0.3);
+  }
+  
+  .hero-gradient {
+    background: radial-gradient(circle at center, rgba(99, 102, 241, 0.1) 0%, transparent 70%);
+  }
+  
+  .nav-glass {
+    @apply bg-black/60 backdrop-blur-2xl border-b border-white/5 sticky top-0 z-50;
+  }
+}
+
+/* Custom Scrollbar for Premium Feel */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: oklch(0.5 0.1 260 / 0.2);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: oklch(0.5 0.1 260 / 0.4);
+}

@@ -113,184 +113,157 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onSubmit, isLoading =
   const isFieldFocused = (field: string) => focusedField === field;
 
   return (
-    <div className="max-w-2xl mx-auto p-8">
-      <div className="bg-white rounded-3xl shadow-2xl overflow-hidden">
-        <div className="bg-gradient-to-r from-blue-600 to-black px-8 py-6">
-          <h2 className="text-3xl font-bold text-white mb-2">Add Transaction</h2>
-          <p className="text-blue-100">Track your financial activity</p>
-        </div>
-        
-        <form onSubmit={handleSubmit} className="p-8 space-y-6">
-          <AiEntry onExtracted={(data: any) => {
-            setFormData(prev => ({
-              ...prev,
-              amount: data.amount || prev.amount,
-              description: data.merchant || prev.description,
-              date: data.date || prev.date,
-              category: data.category || prev.category
-            }));
-            setErrors({});
-          }} />
-
-          {/* Amount Field */}
-          <div className="space-y-2">
-            <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-              <IndianRupee className="w-4 h-4" />
-              Amount
-            </label>
-            <div className="relative">
-              <input
-                type="number"
-                step="0.01"
-                value={formData.amount || ''}
-                onChange={(e) => handleInputChange('amount', parseFloat(e.target.value) || 0)}
-                onFocus={() => setFocusedField('amount')}
-                onBlur={() => setFocusedField(null)}
-                className={`w-full px-4 py-3 rounded-xl border-2 text-lg font-medium transition-all duration-200 ${
-                  getFieldError('amount')
-                    ? 'border-red-300 focus:border-red-500 focus:ring-red-200'
-                    : isFieldFocused('amount')
-                    ? 'border-blue-400 focus:border-blue-500 focus:ring-blue-200'
-                    : 'border-gray-200 hover:border-gray-300'
-                } focus:outline-none focus:ring-4 bg-gray-50 focus:bg-white`}
-                placeholder="0.00"
-              />
-              <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400">
-                INR
-              </div>
-            </div>
-            {getFieldError('amount') && (
-              <p className="text-red-500 text-sm flex items-center gap-1">
-                <AlertCircle className="w-4 h-4" />
-                {getFieldError('amount')}
-              </p>
-            )}
-          </div>
-
-          {/* Description Field */}
-          <div className="space-y-2">
-            <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-              <FileText className="w-4 h-4" />
-              Description
-            </label>
-            <div className="relative">
-              <textarea
-                value={formData.description}
-                onChange={(e) => handleInputChange('description', e.target.value)}
-                onFocus={() => setFocusedField('description')}
-                onBlur={() => setFocusedField(null)}
-                rows={3}
-                className={`w-full px-4 py-3 rounded-xl border-2 transition-all duration-200 resize-none ${
-                  getFieldError('description')
-                    ? 'border-red-300 focus:border-red-500 focus:ring-red-200'
-                    : isFieldFocused('description')
-                    ? 'border-blue-400 focus:border-blue-500 focus:ring-blue-200'
-                    : 'border-gray-200 hover:border-gray-300'
-                } focus:outline-none focus:ring-4 bg-gray-50 focus:bg-white`}
-                placeholder="Enter transaction description..."
-              />
-              <div className="absolute bottom-2 right-2 text-xs text-gray-400">
-                {formData.description.length}/100
-              </div>
-            </div>
-            {getFieldError('description') && (
-              <p className="text-red-500 text-sm flex items-center gap-1">
-                <AlertCircle className="w-4 h-4" />
-                {getFieldError('description')}
-              </p>
-            )}
-          </div>
-
-          {/* Date Field */}
-          <div className="space-y-2">
-            <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-              <Calendar className="w-4 h-4" />
-              Date
-            </label>
-            <input
-              type="date"
-              value={formData.date}
-              onChange={(e) => handleInputChange('date', e.target.value)}
-              onFocus={() => setFocusedField('date')}
-              onBlur={() => setFocusedField(null)}
-              className={`w-full px-4 py-3 rounded-xl border-2 transition-all duration-200 ${
-                getFieldError('date')
-                  ? 'border-red-300 focus:border-red-500 focus:ring-red-200'
-                  : isFieldFocused('date')
-                  ? 'border-blue-400 focus:border-blue-500 focus:ring-blue-200'
-                  : 'border-gray-200 hover:border-gray-300'
-              } focus:outline-none focus:ring-4 bg-gray-50 focus:bg-white`}
-            />
-            {getFieldError('date') && (
-              <p className="text-red-500 text-sm flex items-center gap-1">
-                <AlertCircle className="w-4 h-4" />
-                {getFieldError('date')}
-              </p>
-            )}
-          </div>
-
-          {/* Category Field */}
-          <div className="space-y-2">
-            <label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
-              <Tag className="w-4 h-4" />
-              Category <span className="text-xs text-gray-500 ml-1">(Optional)</span>
-            </label>
-            <select
-              value={formData.category}
-              onChange={(e) => handleInputChange('category', e.target.value)}
-              onFocus={() => setFocusedField('category')}
-              onBlur={() => setFocusedField(null)}
-              className={`w-full px-4 py-3 rounded-xl border-2 transition-all duration-200 ${
-                isFieldFocused('category')
-                  ? 'border-blue-400 focus:border-blue-500 focus:ring-blue-200'
-                  : 'border-gray-200 hover:border-gray-300'
-              } focus:outline-none focus:ring-4 bg-gray-50 focus:bg-white`}
-            >
-              <option value="">Select a category...</option>
-              {TRANSACTION_CATEGORIES.map(category => (
-                <option key={category} value={category}>
-                  {category}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Submit Button */}
-          <div className="pt-4">
-            <button
-              type="submit"
-              disabled={isLoading || isSubmitted}
-              className={`w-full py-4 px-6 rounded-xl font-semibold text-white transition-all duration-200 transform ${
-                isSubmitted
-                  ? 'bg-green-500 shadow-lg'
-                  : isLoading
-                  ? 'bg-gray-400 cursor-not-allowed'
-                  : 'bg-gradient-to-r from-blue-600 to-black hover:from-blue-700 hover:to-black-700 hover:shadow-lg hover:scale-105 active:scale-95'
-              } focus:outline-none focus:ring-4 focus:ring-blue-200`}
-            >
-              <div className="flex items-center justify-center gap-2">
-                {isSubmitted ? (
-                  <>
-                    <Check className="w-5 h-5" />
-                    Transaction Added!
-                  </>
-                ) : isLoading ? (
-                  <>
-                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                    Processing...
-                  </>
-                ) : (
-                  <>
-                    <Plus className="w-5 h-5" />
-                    Add Transaction
-                  </>
-                )}
-              </div>
-            </button>
-          </div>
-        </form>
+    <form onSubmit={handleSubmit} className="space-y-6">
+      <div className="mb-8">
+        <AiEntry onExtracted={(data: any) => {
+          setFormData(prev => ({
+            ...prev,
+            amount: data.amount || prev.amount,
+            description: data.merchant || prev.description,
+            date: data.date || prev.date,
+            category: data.category || prev.category
+          }));
+          setErrors({});
+        }} />
       </div>
-    </div>
+
+      {/* Amount Field */}
+      <div className="space-y-3">
+        <label className="text-[10px] font-black text-slate-500 flex items-center gap-2 uppercase tracking-widest">
+          <IndianRupee className="w-3.5 h-3.5 text-indigo-400" />
+          Quantum (INR)
+        </label>
+        <div className="relative group">
+          <input
+            type="number"
+            step="0.01"
+            value={formData.amount || ''}
+            onChange={(e) => handleInputChange('amount', parseFloat(e.target.value) || 0)}
+            onFocus={() => setFocusedField('amount')}
+            onBlur={() => setFocusedField(null)}
+            className={`glass-input w-full text-2xl font-black tracking-tight ${
+              getFieldError('amount') ? 'border-rose-500/50 focus:ring-rose-500/20' : ''
+            }`}
+            placeholder="0.00"
+          />
+          <div className="absolute right-4 top-1/2 transform -translate-y-1/2 text-slate-600 font-bold text-xs group-focus-within:text-indigo-400 transition-colors">
+            CURRENCY
+          </div>
+        </div>
+        {getFieldError('amount') && (
+          <p className="text-rose-400 text-[10px] font-bold flex items-center gap-1.5 uppercase tracking-wide">
+            <AlertCircle className="w-3 h-3" />
+            {getFieldError('amount')}
+          </p>
+        )}
+      </div>
+
+      {/* Description Field */}
+      <div className="space-y-3">
+        <label className="text-[10px] font-black text-slate-500 flex items-center gap-2 uppercase tracking-widest">
+          <FileText className="w-3.5 h-3.5 text-indigo-400" />
+          Description Profile
+        </label>
+        <div className="relative group">
+          <textarea
+            value={formData.description}
+            onChange={(e) => handleInputChange('description', e.target.value)}
+            onFocus={() => setFocusedField('description')}
+            onBlur={() => setFocusedField(null)}
+            rows={2}
+            className={`glass-input w-full py-4 resize-none font-medium ${
+              getFieldError('description') ? 'border-rose-500/50 focus:ring-rose-500/20' : ''
+            }`}
+            placeholder="What was this expenditure for?"
+          />
+          <div className="absolute bottom-3 right-4 text-[10px] font-bold text-slate-600 uppercase tracking-widest">
+            {formData.description.length}/100
+          </div>
+        </div>
+        {getFieldError('description') && (
+          <p className="text-rose-400 text-[10px] font-bold flex items-center gap-1.5 uppercase tracking-wide">
+            <AlertCircle className="w-3 h-3" />
+            {getFieldError('description')}
+          </p>
+        )}
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Date Field */}
+        <div className="space-y-3">
+          <label className="text-[10px] font-black text-slate-500 flex items-center gap-2 uppercase tracking-widest">
+            <Calendar className="w-3.5 h-3.5 text-indigo-400" />
+            Temporal Point
+          </label>
+          <input
+            type="date"
+            value={formData.date}
+            onChange={(e) => handleInputChange('date', e.target.value)}
+            onFocus={() => setFocusedField('date')}
+            onBlur={() => setFocusedField(null)}
+            className={`glass-input w-full font-bold ${
+              getFieldError('date') ? 'border-rose-500/50 focus:ring-rose-500/20' : ''
+            }`}
+          />
+        </div>
+
+        {/* Category Field */}
+        <div className="space-y-3">
+          <label className="text-[10px] font-black text-slate-500 flex items-center gap-2 uppercase tracking-widest">
+            <Tag className="w-3.5 h-3.5 text-indigo-400" />
+            Domain Tag
+          </label>
+          <select
+            value={formData.category}
+            onChange={(e) => handleInputChange('category', e.target.value)}
+            onFocus={() => setFocusedField('category')}
+            onBlur={() => setFocusedField(null)}
+            className="glass-input w-full bg-slate-900 font-bold appearance-none cursor-pointer"
+          >
+            <option value="">Auto-Detect</option>
+            {TRANSACTION_CATEGORIES.map(category => (
+              <option key={category} value={category}>
+                {category}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+
+      {/* Submit Button */}
+      <div className="pt-6">
+        <button
+          type="submit"
+          disabled={isLoading || isSubmitted}
+          className={`w-full py-5 px-8 rounded-2xl font-black text-sm uppercase tracking-widest transition-all duration-300 transform shadow-xl ${
+            isSubmitted
+              ? 'bg-emerald-500 text-white shadow-emerald-500/20'
+              : isLoading
+              ? 'bg-slate-800 text-slate-500 cursor-not-allowed border border-white/5'
+              : 'bg-indigo-600 text-white hover:bg-indigo-500 hover:scale-[1.02] active:scale-95 shadow-indigo-500/20'
+          } focus:outline-none focus:ring-4 focus:ring-indigo-500/20`}
+        >
+          <div className="flex items-center justify-center gap-3">
+            {isSubmitted ? (
+              <>
+                <Check className="w-5 h-5" />
+                Journal Updated
+              </>
+            ) : isLoading ? (
+              <>
+                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                Encrypting Data...
+              </>
+            ) : (
+              <>
+                <Plus className="w-5 h-5" />
+                Commit Transaction
+              </>
+            )}
+          </div>
+        </button>
+      </div>
+    </form>
   );
 };
 

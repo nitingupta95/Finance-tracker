@@ -64,8 +64,8 @@ function CustomLabel({
 }
 
 const COLORS = [
-  '#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6',
-  '#06b6d4', '#84cc16', '#f97316', '#ec4899', '#6366f1',
+  '#6366f1', '#f43f5e', '#10b981', '#fbbf24', '#a855f7',
+  '#06b6d4', '#84cc16', '#f97316', '#ec4899', '#4f46e5',
 ];
 
 const CategoryPieChart: React.FC<CategoryPieChartProps> = ({ data }) => {
@@ -76,11 +76,15 @@ const CategoryPieChart: React.FC<CategoryPieChartProps> = ({ data }) => {
       const item = payload[0];
       const percentage = ((item.value / total) * 100).toFixed(1);
       return (
-        <div className="bg-white p-3 rounded-lg shadow-lg border">
-          <p className="font-semibold text-gray-900">{item.name}</p>
-          <p className="text-sm text-gray-600">
-            ₹{item.value.toFixed(2)} ({percentage}%)
+        <div className="bg-slate-900/90 backdrop-blur-xl border border-white/10 p-4 rounded-2xl shadow-2xl">
+          <p className="font-bold text-white mb-1 uppercase tracking-widest text-[10px] opacity-60">{item.name}</p>
+          <p className="text-xl font-black text-white">
+            ₹{item.value.toLocaleString()}
           </p>
+          <div className="mt-2 h-1 w-full bg-white/5 rounded-full overflow-hidden">
+             <div className="h-full bg-indigo-500" style={{ width: `${percentage}%` }}></div>
+          </div>
+          <p className="text-[10px] font-bold text-indigo-400 mt-1 uppercase">{percentage}% Share</p>
         </div>
       );
     }
@@ -88,34 +92,39 @@ const CategoryPieChart: React.FC<CategoryPieChartProps> = ({ data }) => {
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-xl p-6">
-      <div className="flex items-center gap-3 mb-6">
-        <div className="bg-gradient-to-r from-purple-500 to-pink-600 p-2 rounded-lg">
-          <PieChartIcon className="w-5 h-5 text-white" />
+    <div className="relative">
+      <div className="flex items-center gap-4 mb-10">
+        <div className="bg-purple-500/20 p-3 rounded-2xl border border-purple-500/20 shadow-lg shadow-purple-500/10">
+          <PieChartIcon className="w-6 h-6 text-purple-400" />
         </div>
         <div>
-          <h3 className="text-xl font-bold text-gray-900">Spending by Category</h3>
-          <p className="text-gray-600 text-sm">Distribution of expenses</p>
+          <h3 className="text-xl font-bold text-white tracking-tight">Category Intelligence</h3>
+          <p className="text-slate-500 text-xs font-bold uppercase tracking-widest mt-0.5">Distribution of Capital</p>
         </div>
       </div>
 
-      <div className="h-80">
+      <div className="h-[280px]">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie
               data={data}
               cx="50%"
               cy="50%"
+              innerRadius={60}
+              outerRadius={90}
+              paddingAngle={5}
               labelLine={false}
               label={CustomLabel}
-              outerRadius={100}
-              fill="#8884d8"
               dataKey="value"
+              stroke="none"
+              animationBegin={0}
+              animationDuration={1500}
             >
               {data.map((entry, index) => (
                 <Cell
                   key={`cell-${index}`}
                   fill={COLORS[index % COLORS.length]}
+                  className="hover:opacity-80 transition-opacity cursor-pointer outline-none"
                 />
               ))}
             </Pie>
@@ -124,16 +133,21 @@ const CategoryPieChart: React.FC<CategoryPieChartProps> = ({ data }) => {
         </ResponsiveContainer>
       </div>
 
-      <div className="mt-6 pt-6 border-t border-gray-100">
-        <div className="grid grid-cols-2 gap-3">
+      <div className="mt-8 pt-6 border-t border-white/5">
+        <div className="grid grid-cols-2 gap-4">
           {data.slice(0, 6).map((item, index) => (
-            <div key={item.name} className="flex items-center gap-2">
-              <div
-                className="w-3 h-3 rounded-full"
-                style={{ backgroundColor: COLORS[index % COLORS.length] }}
-              />
-              <span className="text-sm text-gray-700 truncate flex-1">{item.name}</span>
-              <span className="text-sm font-semibold text-gray-900">
+            <div key={item.name} className="group flex items-center justify-between p-2 rounded-xl hover:bg-white/5 transition-all">
+              <div className="flex items-center gap-2.5">
+                <div
+                  className="w-2.5 h-2.5 rounded-full shadow-[0_0_8px_rgba(0,0,0,0.5)]"
+                  style={{ 
+                    backgroundColor: COLORS[index % COLORS.length],
+                    boxShadow: `0 0 10px ${COLORS[index % COLORS.length]}80`
+                  }}
+                />
+                <span className="text-xs font-bold text-slate-400 group-hover:text-white transition-colors truncate">{item.name}</span>
+              </div>
+              <span className="text-sm font-black text-white ml-2">
                 ₹{item.value.toFixed(0)}
               </span>
             </div>
